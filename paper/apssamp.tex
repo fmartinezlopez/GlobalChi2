@@ -1,0 +1,122 @@
+\documentclass[aps,prd,twocolumn,showpacs,superscriptaddress,floatfix]{revtex4-2}
+\usepackage{graphicx}
+\usepackage{dcolumn}
+\usepackage{bm}
+\usepackage{hyperref}
+\usepackage{orcidlink}
+\usepackage{comment}
+\usepackage{lineno}
+\usepackage{placeins}
+\usepackage{amsmath,amsfonts}
+\usepackage{longtable}
+\usepackage{multirow}
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    citecolor=blue,
+    urlcolor=blue
+}
+
+% Custom commands
+\newcommand{\strutlike}{\rule{0pt}{1.1\normalbaselineskip}}
+
+\begin{document}
+
+\title{Goodness-of-fit for multi-distribution neutrino cross-section measurements\\with shared events}
+
+\newcommand{\Indiana}{Indiana University, Bloomington, IN 47405, USA}
+\affiliation{\Indiana}
+\author{F.~Mart\'inez~L\'opez\,\orcidlink{0000-0002-3711-8403}} \affiliation{\Indiana}
+
+\date{\today}
+
+\begin{abstract}
+When multiple differential cross-section distributions are extracted from a common event sample with correctly evaluated inter-distribution correlations, the statistical covariance matrix is generically singular. Exact linear constraints from event sharing across measurements, such as equal distribution totals when all selected events populate bins in every distribution, produce directions with zero statistical variance. Systematic uncertainties restore formal invertibility but leave near-singular directions that yield unphysically inflated $\chi^{2}$ values in global goodness-of-fit tests. We present a projection method that restricts the test to the subspace carrying independent statistical information, yielding a $\chi^{2}$ distributed with $N_\text{bins} - N_\text{null}$ degrees of freedom, where $N_\text{null}$ is the number of independent constraints. The method is connected to established results on hypothesis testing with singular covariance matrices and validated with both an analytical toy model and a realistic simulated neutrino--argon cross-section measurement including unfolding and parametrized multi-source systematic uncertainties.
+\end{abstract}
+
+\maketitle
+
+\section{Introduction}
+
+% Opening paragraph -- multi-distribution xsec measurements
+Modern neutrino cross-section literature is experiencing an increase of published measurements reporting multiple differential distributions extracted from the same event sample. MicroBooNE has reported simultaneous measurements of cross sections for final states with and without protons \cite{MicroBooNE:2024zkh,MicroBooNE:2024zwf}, multi-differential QE-like cross section measurements in kinematic imbalance variables \cite{MicroBooNE:2023tzj,MicroBooNE:2023cmw}, and triple-differential inclusive results \cite{MicroBooNE:2023foc}. Other relevant examples include the multiple final-state kinematic projections from T2K \cite{T2K:2018rnz,T2K:2021naz}, and double-differential inclusive results from NOvA \cite{NOvA:2021eqi,NOvA:2024zmr}. In each of these analyses, the same selected events populate bins in multiple reported distributions, leading to strong inter-measurement statistical correlations. Separate but related efforts have produced simultaneous measurements across different nuclear targets \cite{MINERvA:2023kuz,MINERvA:2022djk} and combined neutrino-antineutrino results \cite{T2K:2020sbd}, where correlations arise from shared systematic uncertainties rather than shared events.
+
+% Blockwise unfolding intro
+The blockwise unfolding framework \cite{Gardiner:2024gdy} provides a rigorous method for computing the full cross-distribution covariance matrices in all such measurements. In this approach, all bins corresponding to the same measured observable in the multi-distribution analysis are organized in blocks, each corresponding to a single differential cross-section distribution. Each bin block is unfolded independently using any standard method (e.g. iterative D'Agostini unfolding \cite{DAgostini:1994fjx} or Wiener-SVD \cite{Tang:2017rob}), while the full covariance matrix, encoding the correlations between bins from different distributions, is constructed and propagated through the cross section extraction procedure. The statistical covariance for bins in different blocks is determined by the number of events they share. The result is a single combined covariance matrix covering all reported bins across all distributions.
+
+% Global goodness-of-fit
+A natural use of these combined measurements is computing global goodness-of-fit metrics, such as a $\chi^{2}$ statistic, that test a model against all distributions simultaneously. Compared to evaluating each distribution independently, a global test that accounts for all inter-block correlations provides the maximum discriminating power available from the data. Such global metrics are essential for interaction model tuning efforts \cite{Wilkinson:2016wmz,MINERvA:2019kfr,GENIE:2022qrc}, where measurements of multiple kinematic distributions provide complementary sensitivity to different aspects of the underlying physics. However, as we show in this paper, the full inter-block statistical covariance is generically singular when it correctly accounts for correlations from shared events. The rank deficiency arises from exact linear constraints imposed by the event-sharing structure of the binning scheme: certain linear combinations of bins, such as the difference in total event counts between two distributions of the same events, have identically zero variance. While systematic uncertainties formally restore invertibility, the resulting near-singular directions produce unphysically inflated $\chi^{2}$ values, yielding a global test with the wrong effective number of degrees of freedom.
+
+% Motivation for paper
+We present a method based on projecting onto the range (column space) of the statistical covariance matrix that yields a well-defined chi-squared with the correct number of degrees of freedom. We demonstrate the method using a pedagogical toy example and connect it to the established statistical literature on hypothesis testing with singular covariance matrices.
+
+% Outline
+Brief roadmap of sections.
+
+\section{Origin of the singularity}
+
+\subsection{Setup: multi-distribution measurements}
+
+Define the measurement scenario: B blocks (distributions), each with $N_b$ true bins, extracted from a common event sample via blockwise unfolding.
+
+Each event contributes to exactly one bin in each block.
+
+Total number of bins: $N_{\text{bins}} = \sum_b N_b$.
+
+After unfolding and cross-section extraction, the result is a vector of $N_{\text{bins}}$ cross-section values with an $N_{\text{bins}} \times N_{\text{bins}}$ covariance matrix.
+
+\subsection{Statistical covariance between blocks}
+
+\subsection{Linear constraints from event sharing}
+
+The number of null directions $N_\text{null}$ depends on the overlap structure between blocks. The constraints described above hold exactly when every selected event populates at least one bin in every block, as is the case when underflow and overflow bins are included. Without such bins, events falling outside the kinematic range of a given block do not contribute to the inter-block sum rules, potentially reducing $N_\text{null}$. In practice, the inclusion of overflow bins is already recommended for proper unfolding closure \cite{Gardiner:2024gdy}, and any well-designed blockwise analysis will therefore exhibit the full set of constraints. The projection method presented here remains valid regardless of the value of $N_\text{null}$, including the limiting case $N_\text{null} = 0$ where $C_\text{stat}$ is full rank and the projector reduces to the identity.
+
+\subsection{Why systematics don't resolve the problem}
+
+\subsection{What happens if you ignore inter-block correlations}
+
+\section{The projection method}
+
+\subsection{Constructing the projector}
+
+\subsection{Projected chi-squared}
+
+\subsection{Proof sketch / justification}
+
+\subsection{Relation to alternative approaches}
+
+\section{Analytical demonstration}
+
+\subsection{Setup}
+
+\subsection{Eigenvalue analysis}
+
+\subsection{Pseudo-experiment validation}
+
+\subsection{Sensitivity to threshold choice}
+
+\section{Realistic demonstration with neutrino generators }
+
+\subsection{Simulation setup}
+
+\subsection{Example 1: Two blocks ($N_{\text{null}} = 1$)}
+
+\subsection{Example 2: Four blocks with multiplicity slicing ($N_{\text{null}} = 2$)}
+
+\subsection{Practical observations}
+
+\section{Practical implementation guide}
+
+\subsection{Step-by-step recipe}
+
+\subsection{What to include in data releases}
+
+\subsection{Compatibility notes}
+
+\section{Connection to the statistics literature}
+
+\section{Summary and recommendations}
+
+\bibliography{apssamp}
+
+\end{document}
