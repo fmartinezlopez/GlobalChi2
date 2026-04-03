@@ -2,6 +2,7 @@
 \usepackage{graphicx}
 \usepackage{dcolumn}
 \usepackage{bm}
+\usepackage{mathtools}
 \usepackage{hyperref}
 \usepackage{orcidlink}
 \usepackage{comment}
@@ -39,7 +40,7 @@ When multiple differential cross-section distributions are extracted from a comm
 \section{Introduction}
 
 % Opening paragraph -- multi-distribution xsec measurements
-Modern neutrino cross-section literature is experiencing an increase of published measurements reporting multiple differential distributions extracted from the same event sample. MicroBooNE has reported simultaneous measurements of cross sections for final states with and without protons \cite{MicroBooNE:2024zkh,MicroBooNE:2024zwf}, multi-differential QE-like cross section measurements in kinematic imbalance variables \cite{MicroBooNE:2023tzj,MicroBooNE:2023cmw}, and triple-differential inclusive results \cite{MicroBooNE:2023foc}. Other relevant examples include the multiple final-state kinematic projections from T2K \cite{T2K:2018rnz,T2K:2021naz}, and double-differential inclusive results from NOvA \cite{NOvA:2021eqi,NOvA:2024zmr}. In each of these analyses, the same selected events populate bins in multiple reported distributions, leading to strong inter-measurement statistical correlations. Separate but related efforts have produced simultaneous measurements across different nuclear targets \cite{MINERvA:2023kuz,MINERvA:2022djk} and combined neutrino-antineutrino results \cite{T2K:2020sbd}, where correlations arise from shared systematic uncertainties rather than shared events.
+Modern neutrino cross-section literature is experiencing an increase of published measurements reporting multiple differential distributions extracted from the same event sample. MicroBooNE has reported simultaneous measurements of cross sections for final states with and without protons \cite{MicroBooNE:2024zkh,MicroBooNE:2024zwf}, multi-differential QE-like cross section measurements in kinematic imbalance variables \cite{MicroBooNE:2023tzj,MicroBooNE:2023cmw}, and triple-differential inclusive results \cite{MicroBooNE:2023foc}. Other relevant examples include the multiple final-state kinematic projections from T2K \cite{T2K:2018rnz,T2K:2021naz}, and double-differential inclusive results from NOvA \cite{NOvA:2021eqi,NOvA:2024zmr,NOvA:2024rov}. In each of these analyses, the same selected events populate bins in multiple reported distributions, leading to strong inter-measurement statistical correlations. Separate but related efforts have produced simultaneous measurements across different nuclear targets \cite{T2K:2020jav,MINERvA:2023kuz,MINERvA:2022djk} and combined neutrino-antineutrino results \cite{T2K:2020sbd}, where correlations arise from shared systematic uncertainties rather than shared events.
 
 % Blockwise unfolding intro
 The blockwise unfolding framework \cite{Gardiner:2024gdy} provides a rigorous method for computing the full cross-distribution covariance matrices in all such measurements. In this approach, all bins corresponding to the same measured observable in the multi-distribution analysis are organized in blocks, each corresponding to a single differential cross-section distribution. Each bin block is unfolded independently using any standard method (e.g. iterative D'Agostini unfolding \cite{DAgostini:1994fjx} or Wiener-SVD \cite{Tang:2017rob}), while the full covariance matrix, encoding the correlations between bins from different distributions, is constructed and propagated through the cross section extraction procedure. The statistical covariance for bins in different blocks is determined by the number of events they share. The result is a single combined covariance matrix covering all reported bins across all distributions.
@@ -55,25 +56,56 @@ Brief roadmap of sections.
 
 \section{Origin of the singularity}
 
-\subsection{Setup: multi-distribution measurements}
+Consider a neutrino cross-section analysis simultaneously measuring $B$ different flux-integrated differential cross sections, each with $N_b$ true bins. If the measurement is extracted from a common event sample then each selected event will populate exactly one bin in each distribution it belongs to. Recent MicroBooNE analyses \cite{MicroBooNE:2024yzp} have adopted the blockwise unfolding approach presented in Ref. \cite{Gardiner:2024gdy} to simultaneous cross-section measurements.
 
-Define the measurement scenario: B blocks (distributions), each with $N_b$ true bins, extracted from a common event sample via blockwise unfolding.
+This method provides a systematic framework for reporting the correlations between the different extracted differential cross sections. It provides a general prescription to construct statistical covariance matrices that respect the correlations between bins in different distributions or blocks. The full inter-block covariance matrix constructed in reconstructed space is propagated through unfolding using a block-diagonal unfolding matrix, obtained as a direct sum of the individual unfolding matrices computed for each block. The result of the combined measurement is a vector of $N_{\text{bins}} = \sum_{b=1}^{B} N_b$ cross-section values with an $N_{\text{bins}} \times N_{\text{bins}}$ covariance matrix.
 
-Each event contributes to exactly one bin in each block.
+\subsection{Statistical covariance from shared events}
 
-Total number of bins: $N_{\text{bins}} = \sum_b N_b$.
+The core idea behind the treatment of the statistical correlations in the blockwise unfolding approach is the partition of any arbitrary pair of overlapping kinematic bins $X$ and $Y$ into a set of three non-overlaping bins $u$, $v$, and $w$. The events in the intersection $X \cap Y$ are assigned to bin $v$, while bin $u$ contains the events in the relative complement of $X$ in $Y$ (i.e. $X \setminus Y$), and bin $w$ corresponds to the relative complement of $Y$ in $X$ (i.e. $Y \setminus X$). Denoting the number of predicted events in each bin as $n_{i}$, and assuming these follow independent Poisson distributions, the covariance between the counts in bins $X$ and $Y$ is given by \cite{Gardiner:2024gdy}:
+\begin{equation}
+    \begin{split}
+        \text{Cov}(n_{X}, n_{Y}) &= \text{Cov}(n_{u} + n_{v}, n_{v} + n_{w})\\
+        &= \text{Cov}(n_{u}, n_{v}) + \text{Cov}(n_{u}, n_{w})\\
+        &\phantom{=} + \text{Cov}(n_{v}, n_{v}) + \text{Cov}(n_{v}, n_{w})\\
+        &= \text{Var}(n_{v}),
+    \end{split}
+\end{equation}
+as by definition bins $u$, $v$, and $w$ have no events in common. This implies that the covariance between any two bins can be estimated from the variance of the events they share.
 
-After unfolding and cross-section extraction, the result is a vector of $N_{\text{bins}}$ cross-section values with an $N_{\text{bins}} \times N_{\text{bins}}$ covariance matrix.
+The variance for a set of Monte Carlo (MC) events can be estimated from the sum of their squared weights. This gives us a general prescription to calculate the elements of the statistical covariance matrix as:
+\begin{equation}
+    (C_{\text{stat}})_{ij} = \sum_{e \in (i \cap j)} w_{e}^{2},
+\end{equation}
+where $w_{e}$ is the weight associated to event $e$ belonging to the intersection of bins $i$ and $j$.
 
-\subsection{Statistical covariance between blocks}
+After propagation through the block-diagonal unfolding, the statistical covariance in unfolded space inherits the same rank structure, given that the unfolding matrix is invertible. This rank structure has a direct interpretation in terms of the number of distinct event-sharing patterns across distributions.
 
-\subsection{Linear constraints from event sharing}
+\subsection{Combination matrix and null space}
+
+For each event $e$, we can define the indicator vector $\bm{\phi}_{e} \coloneqq (\phi_{i})_{i = 0}^{N_{\text{bins}}}$ such that $\phi_{i} = 1$ if $i \in \text{bins}(e)$ and $\phi_{i} = 0$ if $i \notin \text{bins}(e)$, where $\text{bins}(e)$ is the set of bins event $e$ populates. The statistical covariance can be re-written in terms of indicator vectors as:
+\begin{equation}
+    C_{\text{stat}} = \sum_{e} w_{e}^{2} \, \bm{\phi}_{e} \, \bm{\phi}_{e}^{\mathsf{T}},
+\end{equation}
+where $w_{e}$ is the weight associated to event $e$.
+
+The rank of the statistical covariance matrix equals the dimension of $\mathrm{span}\{\phi_e\}$, which depends only on the distinct indicator vectors present, not on their weights. Define the bin-combination matrix $A$ as the matrix whose rows are the unique indicator vectors among $\phi_e$. Then:
+\begin{equation}
+    \mathrm{rank} (C_{\text{stat}}) = \mathrm{rank} (A)
+\end{equation}
+
+A vector $\mathbf{x}$ is in the null space of $C_{\text{stat}}$ if and only if, for every event $e$:
+\begin{equation}
+    \sum x_{i} = 0
+\end{equation}
+
+\subsection{Types of constraints}
 
 The number of null directions $N_\text{null}$ depends on the overlap structure between blocks. The constraints described above hold exactly when every selected event populates at least one bin in every block, as is the case when underflow and overflow bins are included. Without such bins, events falling outside the kinematic range of a given block do not contribute to the inter-block sum rules, potentially reducing $N_\text{null}$. In practice, the inclusion of overflow bins is already recommended for proper unfolding closure \cite{Gardiner:2024gdy}, and any well-designed blockwise analysis will therefore exhibit the full set of constraints. The projection method presented here remains valid regardless of the value of $N_\text{null}$, including the limiting case $N_\text{null} = 0$ where $C_\text{stat}$ is full rank and the projector reduces to the identity.
 
-\subsection{Why systematics don't resolve the problem}
+\subsection{Effect of systematic uncertainties}
 
-\subsection{What happens if you ignore inter-block correlations}
+\subsection{Ignoring inter-block correlations}
 
 \section{The projection method}
 
