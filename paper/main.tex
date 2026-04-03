@@ -1,41 +1,30 @@
-\documentclass[aps,prd,twocolumn,showpacs,superscriptaddress,floatfix]{revtex4-2}
-\usepackage{graphicx}
-\usepackage{dcolumn}
+\documentclass[a4paper,11pt]{article}
+\usepackage{jinstpub} % for details on the use of the package, please see the JINST-author-manual
+\usepackage{lineno}
 \usepackage{bm}
 \usepackage{mathtools}
-\usepackage{hyperref}
-\usepackage{orcidlink}
-\usepackage{comment}
-\usepackage{lineno}
-\usepackage{placeins}
-\usepackage{amsmath,amsfonts}
-\usepackage{longtable}
-\usepackage{multirow}
-\hypersetup{
-    colorlinks=true,
-    linkcolor=blue,
-    citecolor=blue,
-    urlcolor=blue
-}
+\linenumbers
 
 % Custom commands
 \newcommand{\strutlike}{\rule{0pt}{1.1\normalbaselineskip}}
 
+\title{\boldmath Goodness-of-fit for multi-distribution neutrino cross-section measurements with shared events}
+
+\author{F. Mart\'inez L\'opez}
+\affiliation{Department of Physics, Indiana University,\\727 E. Third St., Bloomington, IN, USA, 47405}
+
+% E-mail addresses: only for the corresponding author
+\emailAdd{frmar@iu.edu}
+
+\abstract{When multiple differential cross-section distributions are extracted from a common event sample with correctly evaluated inter-distribution correlations, the statistical covariance matrix is generically singular. Exact linear constraints from event sharing across measurements, such as equal distribution totals when all selected events populate bins in every distribution, produce directions with zero statistical variance. Systematic uncertainties restore formal invertibility but leave near-singular directions that yield unphysically inflated $\chi^{2}$ values in global goodness-of-fit tests. We present a projection method that restricts the test to the subspace carrying independent statistical information, yielding a $\chi^{2}$ distributed with $N_\text{bins} - N_\text{null}$ degrees of freedom, where $N_\text{null}$ is the number of independent constraints. The method is connected to established results on hypothesis testing with singular covariance matrices and validated with both an analytical toy model and a realistic simulated neutrino--argon cross-section measurement including unfolding and parametrized multi-source systematic uncertainties.}
+
+\keywords{Analysis and statistical methods}
+
+\arxivnumber{1234.56789} % Only if you have one
+
 \begin{document}
-
-\title{Goodness-of-fit for multi-distribution neutrino cross-section measurements\\with shared events}
-
-\newcommand{\Indiana}{Indiana University, Bloomington, IN 47405, USA}
-\affiliation{\Indiana}
-\author{F.~Mart\'inez~L\'opez\,\orcidlink{0000-0002-3711-8403}} \affiliation{\Indiana}
-
-\date{\today}
-
-\begin{abstract}
-When multiple differential cross-section distributions are extracted from a common event sample with correctly evaluated inter-distribution correlations, the statistical covariance matrix is generically singular. Exact linear constraints from event sharing across measurements, such as equal distribution totals when all selected events populate bins in every distribution, produce directions with zero statistical variance. Systematic uncertainties restore formal invertibility but leave near-singular directions that yield unphysically inflated $\chi^{2}$ values in global goodness-of-fit tests. We present a projection method that restricts the test to the subspace carrying independent statistical information, yielding a $\chi^{2}$ distributed with $N_\text{bins} - N_\text{null}$ degrees of freedom, where $N_\text{null}$ is the number of independent constraints. The method is connected to established results on hypothesis testing with singular covariance matrices and validated with both an analytical toy model and a realistic simulated neutrino--argon cross-section measurement including unfolding and parametrized multi-source systematic uncertainties.
-\end{abstract}
-
 \maketitle
+\flushbottom
 
 \section{Introduction}
 
@@ -66,8 +55,7 @@ The core idea behind the treatment of the statistical correlations in the blockw
 \begin{equation}
     \begin{split}
         \text{Cov}(n_{X}, n_{Y}) &= \text{Cov}(n_{u} + n_{v}, n_{v} + n_{w})\\
-        &= \text{Cov}(n_{u}, n_{v}) + \text{Cov}(n_{u}, n_{w})\\
-        &\phantom{=} + \text{Cov}(n_{v}, n_{v}) + \text{Cov}(n_{v}, n_{w})\\
+        &= \text{Cov}(n_{u}, n_{v}) + \text{Cov}(n_{u}, n_{w}) + \text{Cov}(n_{v}, n_{v}) + \text{Cov}(n_{v}, n_{w})\\
         &= \text{Var}(n_{v}),
     \end{split}
 \end{equation}
@@ -149,6 +137,12 @@ The number of null directions $N_\text{null}$ depends on the overlap structure b
 
 \section{Summary and recommendations}
 
-\bibliography{apssamp}
+\acknowledgments
+
+% Bibliography
+
+%% [A] Recommended: using JHEP.bst file
+\bibliographystyle{JHEP}
+\bibliography{biblio.bib}
 
 \end{document}
