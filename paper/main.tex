@@ -43,7 +43,7 @@ We present a method based on projecting onto the range (column space) of the sta
 % Outline
 Brief roadmap of sections.
 
-\section{Origin of the singularity}
+\section{Rank deficiency of the statistical covariance}
 
 Consider a neutrino cross-section analysis simultaneously measuring $B$ different flux-integrated differential cross sections, each with $N_b$ true bins. If the measurement is extracted from a common event sample then each selected event will populate exactly one bin in each distribution it belongs to. Recent MicroBooNE analyses \cite{MicroBooNE:2024yzp} have adopted the blockwise unfolding approach presented in Ref. \cite{Gardiner:2024gdy} to simultaneous cross-section measurements.
 
@@ -51,7 +51,7 @@ This method provides a systematic framework for reporting the correlations betwe
 
 \subsection{Statistical covariance from shared events}
 
-The core idea behind the treatment of the statistical correlations in the blockwise unfolding approach is the partition of any arbitrary pair of overlapping kinematic bins $X$ and $Y$ into a set of three non-overlaping bins $u$, $v$, and $w$. The events in the intersection $X \cap Y$ are assigned to bin $v$, while bin $u$ contains the events in the relative complement of $X$ in $Y$ (i.e. $X \setminus Y$), and bin $w$ corresponds to the relative complement of $Y$ in $X$ (i.e. $Y \setminus X$). Denoting the number of predicted events in each bin as $n_{i}$, and assuming these follow independent Poisson distributions, the covariance between the counts in bins $X$ and $Y$ is given by \cite{Gardiner:2024gdy}:
+The core idea behind the treatment of the statistical correlations in the blockwise unfolding approach is the partition of any arbitrary pair of overlapping kinematic bins $X$ and $Y$ into a set of three non-overlaping bins $u$, $v$, and $w$. The events in the intersection $X \cap Y$ are assigned to bin $v$, while bin $u$ contains the events in the relative complement of $Y$ in $X$ (i.e. $X \setminus Y$), and bin $w$ corresponds to the relative complement of $X$ in $Y$ (i.e. $Y \setminus X$). Denoting the number of predicted events in each bin as $n_{i}$, and assuming these follow independent Poisson distributions, the covariance between the counts in bins $X$ and $Y$ is given by \cite{Gardiner:2024gdy}:
 \begin{equation}
     \begin{split}
         \text{Cov}(n_{X}, n_{Y}) &= \text{Cov}(n_{u} + n_{v}, n_{v} + n_{w})\\
@@ -62,30 +62,40 @@ The core idea behind the treatment of the statistical correlations in the blockw
 as by definition bins $u$, $v$, and $w$ have no events in common. This implies that the covariance between any two bins can be estimated from the variance of the events they share.
 
 The variance for a set of Monte Carlo (MC) events can be estimated from the sum of their squared weights. This gives us a general prescription to calculate the elements of the statistical covariance matrix as:
-\begin{equation}
+\begin{equation}\label{eq:cstat_elements}
     (C_{\text{stat}})_{ij} = \sum_{e \in (i \cap j)} w_{e}^{2},
 \end{equation}
-where $w_{e}$ is the weight associated to event $e$ belonging to the intersection of bins $i$ and $j$.
+where $w_{e}$ is the weight associated to event $e$ belonging to the intersection of bins $i$ and $j$. In the case of measured data the weights are $1$, and the covariance element simplifies to the number of events shared between the bins $n_{ij}$.
 
-After propagation through the block-diagonal unfolding, the statistical covariance in unfolded space inherits the same rank structure, given that the unfolding matrix is invertible. This rank structure has a direct interpretation in terms of the number of distinct event-sharing patterns across distributions.
+After propagation through the block-diagonal unfolding, the statistical covariance matrix in unfolded space inherits the same rank structure, as the unfolding matrices for each individual block are invertible. This rank structure has a direct interpretation in terms of the number of distinct event-sharing patterns across distributions, which we discuss next.
 
 \subsection{Combination matrix and null space}
 
-For each event $e$, we can define the indicator vector $\bm{\phi}_{e} \coloneqq (\phi_{i})_{i = 0}^{N_{\text{bins}}}$ such that $\phi_{i} = 1$ if $i \in \text{bins}(e)$ and $\phi_{i} = 0$ if $i \notin \text{bins}(e)$, where $\text{bins}(e)$ is the set of bins event $e$ populates. The statistical covariance can be re-written in terms of indicator vectors as:
-\begin{equation}
-    C_{\text{stat}} = \sum_{e} w_{e}^{2} \, \bm{\phi}_{e} \, \bm{\phi}_{e}^{\mathsf{T}},
-\end{equation}
-where $w_{e}$ is the weight associated to event $e$.
+The previous discussion shows that the statistical covariance between any two bins is determined solely by the events they share. We now formalize this observation to derive an exact formula for the rank of $C_{\text{stat}}$, and therefore for the number of directions in bin space that carry zero statistical variance.
 
-The rank of the statistical covariance matrix equals the dimension of $\mathrm{span}\{\phi_e\}$, which depends only on the distinct indicator vectors present, not on their weights. Define the bin-combination matrix $A$ as the matrix whose rows are the unique indicator vectors among $\phi_e$. Then:
-\begin{equation}
-    \mathrm{rank} (C_{\text{stat}}) = \mathrm{rank} (A)
+For each event $e$, we can define the indicator vector $\bm{\phi}_{e} \coloneqq (\phi_{i})_{i = 1}^{N_{\text{bins}}}$ such that $\phi_{i} = 1$ if $i \in \text{bins}(e)$ and $\phi_{i} = 0$ if $i \notin \text{bins}(e)$, where $\text{bins}(e)$ is the set of bins event $e$ populates across all distributions. The indicator vector acts as an identifier of each event in the combined measurement. For example, in a two-block measurement with 3~bins each, an event populating bin~2 of block~1 and bin~1 of block~2 has indicator vector $\bm{\phi}_{e} = (0,1,0,1,0,0)$. The statistical covariance matrix can then be re-written in terms of indicator vectors as:
+\begin{equation}\label{eq:cstat_outer}
+    C_{\text{stat}} = \sum_{e} w_{e}^{2} \, \bm{\phi}_{e} \, \bm{\phi}_{e}^{\mathsf{T}}.
 \end{equation}
+
+This outer-product decomposition makes the rank structure of $C_{\text{stat}}$ clear. The rank of the statistical covariance matrix equals the dimension of $\mathrm{span}\{\bm{\phi}_e\}$, which depends only on the distinct indicator vectors present, not on their weights. Since all weights are $w_{e} > 0$ no indicator vector is removed from the sum, and the column space of $C_{\text{stat}}$ is exactly $\mathrm{span}\{\bm{\phi}_e\}$.
+
+We define the bin-combination matrix $A$ as the matrix whose rows are the unique indicator vectors among $\{\bm{\phi}_e\}$. Each row of $A$ represent a distinct pattern of bin occupancy across the blocks. By construction the row space of $A$ equals $\mathrm{span}\{\bm{\phi}_e\}$, and therefore:
+\begin{equation}\label{eq:rank_formula}
+    \mathrm{rank} (C_{\text{stat}}) = \mathrm{rank} (A).
+\end{equation}
+The number of degenerate directions is then:
+\begin{equation}\label{eq:nnull}
+    N_{\text{null}} = N_{\text{bins}} - \mathrm{rank} (A).
+\end{equation}
+
+Physically, each of the $N_{\text{null}}$ directions corresponds to a linear combination of bins along which the measurement has identically zero variance. Any component of the residual vector along such a direction is not perceived by the statistical covariance; it is a direction that the measurement has no statistical power to constrain. Importantly, both $A$ and $N_{\text{null}}$ are directly computable from the MC event-to-bin mapping alone, before constructing any covariance matrix.
 
 A vector $\mathbf{x}$ is in the null space of $C_{\text{stat}}$ if and only if, for every event $e$:
-\begin{equation}
-    \sum x_{i} = 0
+\begin{equation}\label{eq:null_condition}
+    \sum_{i \in \text{bins}(e)} x_{i} = 0,
 \end{equation}
+or equivalently $A \mathbf{x} = 0$. Each unique indicator vector acts as a linear constraint on the null-space vectors, requiring that the components of $\mathbf{x}$ sum to zero over the bins populated by the different events. The null space directions can be divided into two physically distinct categories: structural constraints that follow from the block topology alone, and kinematic constraints that depend on which regions of phase space are populated.
 
 \subsection{Types of constraints}
 
