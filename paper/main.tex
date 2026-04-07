@@ -3,6 +3,7 @@
 \usepackage{lineno}
 \usepackage{bm}
 \usepackage{mathtools}
+\usepackage{comment}
 \linenumbers
 
 % Custom commands
@@ -73,7 +74,7 @@ After propagation through the block-diagonal unfolding, the statistical covarian
 
 The previous discussion shows that the statistical covariance between any two bins is determined solely by the events they share. We now formalize this observation to derive an exact formula for the rank of $C_{\text{stat}}$, and therefore for the number of directions in bin space that carry zero statistical variance.
 
-For each event $e$, we can define the indicator vector $\bm{\phi}_{e} \coloneqq (\phi_{i})_{i = 1}^{N_{\text{bins}}}$ such that $\phi_{i} = 1$ if $i \in \text{bins}(e)$ and $\phi_{i} = 0$ if $i \notin \text{bins}(e)$, where $\text{bins}(e)$ is the set of bins event $e$ populates across all distributions. The indicator vector acts as an identifier of each event in the combined measurement. For example, in a two-block measurement with 3~bins each, an event populating bin~2 of block~1 and bin~1 of block~2 has indicator vector $\bm{\phi}_{e} = (0,1,0,1,0,0)$. The statistical covariance matrix can then be re-written in terms of indicator vectors as:
+For each event $e$, we can define the indicator vector $\bm{\phi}_{e} \coloneqq (\phi_{e,i})_{i = 1}^{N_{\text{bins}}}$ such that $\phi_{e,i} = 1$ if $i \in \text{bins}(e)$ and $\phi_{e,i} = 0$ if $i \notin \text{bins}(e)$, where $\text{bins}(e)$ is the set of bins event $e$ populates across all distributions. The indicator vector acts as an identifier of each event in the combined measurement. For example, in a two-block measurement with 3 bins each, an event populating bin 2 of block 1 and bin 1 of block 2 has indicator vector $\bm{\phi}_{e} = (0,1,0,1,0,0)$. The statistical covariance matrix can then be re-written in terms of indicator vectors as:
 \begin{equation}\label{eq:cstat_outer}
     C_{\text{stat}} = \sum_{e} w_{e}^{2} \, \bm{\phi}_{e} \, \bm{\phi}_{e}^{\mathsf{T}}.
 \end{equation}
@@ -97,15 +98,67 @@ A vector $\mathbf{x}$ is in the null space of $C_{\text{stat}}$ if and only if, 
 \end{equation}
 or equivalently $A \mathbf{x} = 0$. Each unique indicator vector acts as a linear constraint on the null-space vectors, requiring that the components of $\mathbf{x}$ sum to zero over the bins populated by the different events. The null space directions can be divided into two physically distinct categories: structural constraints that follow from the block topology alone, and kinematic constraints that depend on which regions of phase space are populated.
 
-\subsection{Types of constraints}
+\subsection{Determination of the structural null space}
 
+The combination matrix $A$ presented previously is constructed from MC events. One determines which events populate the different bins and collects the unique indicator vectors. However, the indicator vectors that can appear are constrained by two distinct mechanisms. The first is purely structural, the geometry of the binning scheme forbids certain bin combinations. The second is kinematic, correlations between the different variables render some combinations unreachable even though they are geometrically allowed. These constraints are imposed by the underlying physics effects, mainly the differential cross section and the detector acceptance. In the following, we show that the structural constraints can be determined a priori, without generating MC events, from the bin edges used.
+
+The variables used in a measurement are drawn from a set $\{v_{1}, \ldots v_{D}\}$. Each block $b$ uses a subset of these variables, $\mathrm{vars}(b) \subseteq \{v_{1}, \ldots v_{D}\}$. Restricting the discussion to combinations of single- and double-differential measurements, we have $|\mathrm{vars}(b)| \in \{1,2\}$ for every $b$. For each variable $v$ used in a given block $b$, the binning scheme defines a set of bin edges $E_{v}^{(b)}$ that partition the range of $v$ into intervals. In the case of a two-dimensional block, the edges in the binning variable may be slice-dependent, but nevertheless these can be collected into a single set of edges per variable across slices. For each variable $v \in \bigcup_{b} \mathrm{vars}(b)$, we can define the refined edges:
+\begin{equation}
+    \mathcal{E}_{v} = \bigcup_{b \, : \, v \in \mathrm{vars}(b)} E_{v}^{(b)},
+\end{equation}
+with $M_{v} = |\mathcal{E}_{v}| - 1$ denoting the number of refined bins for variable $v$. Since $\mathcal{E}_{v}$ contains all the bin edges from every block that uses that variable, each refined bin is contained entirely within one original bin of every such block.
+
+The common refinement of all blocks is the Cartesian product of the refined bins across all variables:
+\begin{equation}
+    \mathcal{R} = \bigtimes_{v} \{1,\ldots,M_v\}.
+\end{equation}
+Each cell $c \in \mathcal{R}$ specifies a refined bin index for every variable in the measurement. For every block $b$, there exists a unique mapping $\beta_{b}(c)$ between each cell $c$ and an original bin in said block. The elements of the indicator vector $\bm{\phi}_{c} \coloneqq (\phi_{c,i})_{i=1}^{N_{\text{bins}}}$ associated to cell $c$ can be written as:
+\begin{equation}
+    \phi_{c,i} = \begin{cases}
+        1 & \text{if } i = \beta_b(c) \text{ for any block } b, \\
+        0 & \text{otherwise.}
+    \end{cases}
+\end{equation}
+If block $b$ does not use variable $v$ then $\beta_{b}$ is independent of the refined bin index in $v$. Therefore, multiple cells may produce identical indicator vectors.
+
+The structural combination matrix $A_{\text{struct}}$ is defined as the matrix whose rows are the unique indicator vectors from the cells of the common refinement $\{\bm{\phi}_{c} \, : \, c \in \mathcal{R}\}$. By construction, every indicator vector that appears in the $A$ matrix obtained from the MC events is also present in $A_{\text{struct}}$, therefore:
+\begin{equation}
+    \mathrm{rank}(A) \leq \mathrm{rank}(A_{\text{struct}}) \leq N_{\text{bins}}.
+\end{equation}
+This hierarchy motivates a decomposition of the total number of degenerate directions:
+\begin{equation}
+    \begin{split}
+        N_{\text{null}} &= N_{\text{bins}} - \mathrm{rank}(A_{\text{struct}}) + \mathrm{rank}(A_{\text{struct}}) - \mathrm{rank}(A)\\
+        &= N_{\text{null}}^{\text{struct}} + N_{\text{null}}^{\text{kinem}}.
+    \end{split}    
+\end{equation}
+The first term, $N_{\text{null}}^{\text{struct}}$, counts null directions that arise purely from the binning geometry and is computable a priori from the bin edges alone. The second term, $N_{\text{null}}^{\text{kinem}}$, accounts for additional null directions introduced by phase-space restrictions that exclude geometrically allowed combinations and can only be determined from Monte Carlo. A description of the algorithm used to compute $A_{\text{struct}}$, including an optimization that restricts the enumeration to shared variables, is presented in Appendix \ref{app:algorithm}.
+
+The structure of the null space of $A_{\text{struct}}$ depends on how the bin edges for the different blocks overlap. In the simplest case, when blocks do not share variables, every combination of one bin per block is allowed. The resulting null space is $(B-1)$-dimensional, with a single constraint that requires all block totals to be equal. When blocks share one or more variables, the allowed combinations are restricted and the dimension of the null space can be different from $B-1$. The number of null directions depends on how shared variable bin edges are aligned between blocks. Aligned slice edges decouple the measurement into different sub-problems, adding additional sum rules and increasing $N_{\text{null}}^{\text{struct}}$. On the other hand, misaligned edges couple adjacent distributions, potentially reducing the number of constraints. In the general case, the interplay between shared variables, bin edge alignment, and block topology makes a closed-form expression impractical, but the computation of $\mathrm{rank}(A_{\text{struct}})$ from the bin edge specifications is straightforward.
+
+The structural and kinematic components of the null space respond differently to systematic uncertainties. Whether these cause the rank deficiency of $C_{\text{stat}}$ to persist, partially resolve, or fully resolve in the total covariance $C_{\text{total}}$ depends on the nature of the systematic treatment, which we discuss next.
+
+\begin{comment}
 The number of null directions $N_\text{null}$ depends on the overlap structure between blocks. The constraints described above hold exactly when every selected event populates at least one bin in every block, as is the case when underflow and overflow bins are included. Without such bins, events falling outside the kinematic range of a given block do not contribute to the inter-block sum rules, potentially reducing $N_\text{null}$. In practice, the inclusion of overflow bins is already recommended for proper unfolding closure \cite{Gardiner:2024gdy}, and any well-designed blockwise analysis will therefore exhibit the full set of constraints. The projection method presented here remains valid regardless of the value of $N_\text{null}$, including the limiting case $N_\text{null} = 0$ where $C_\text{stat}$ is full rank and the projector reduces to the identity.
+\end{comment}
 
 \subsection{Effect of systematic uncertainties}
 
 \subsection{Ignoring inter-block correlations}
 
-\section{The projection method}
+\section{Range projection method}
+
+the SVD decomposition of the statistical covariance matrix as:
+\begin{equation}
+    C_{\text{stat}} = U \, \Sigma \, U^{\mathsf{T}},
+\end{equation}
+and that $r = \mathrm{rank}(C_{\text{stat}})$. partitionings of $U = [U_{r} | \bar{U}_{r}]$
+\begin{equation}
+    \begin{split}
+        U_{r} U_{r}^{T} &= \text{projection on to } \mathrm{ran}(C_{\text{stat}})\\
+        \bar{U}_{r} \bar{U}_{r}^{T} &= \text{projection on to } \mathrm{null}(C_{\text{stat}})
+    \end{split}
+\end{equation}
 
 \subsection{Constructing the projector}
 
@@ -116,6 +169,13 @@ The number of null directions $N_\text{null}$ depends on the overlap structure b
 \subsection{Relation to alternative approaches}
 
 \section{Analytical demonstration}
+
+\begin{figure}[!h]
+	\centering
+	\includegraphics[width=1.00\linewidth]{images/analytical_corner_example.pdf}
+	\caption{Expected number of signal events for reconstructed bins in block 11, used for the double-differential $(N_{p}, ~\mathrm{cos}~\theta_{\mu l_{4}})$ measurement. Both the central-value MicroBooNE tune prediction (black line) and the NuWro alternative prediction (blue line) are shown. Error bars include only the MC statistical uncertainty.}
+	\label{fig:analytical_corner_example}
+\end{figure}
 
 \subsection{Setup}
 
@@ -148,6 +208,12 @@ The number of null directions $N_\text{null}$ depends on the overlap structure b
 \section{Summary and recommendations}
 
 \acknowledgments
+
+\appendix
+\section{Algorithm}
+\label{app:algorithm}
+
+The naive counting of the common refinement $\mathcal{R}$ has cost $\prod_{v} M_{v}$, which grows exponentially with the number of kinematic variables. A typical multi-distribution measurement involves $\mathcal{O}(5)$ variables each with $\mathcal{O}(10)$ refined bins, giving $\mathcal{O}(10^{5})$ cells. The key insight is that only shared variables (i.e. the ones appearing in two or more blocks) generate the cross-block constraints. Dividing the variable set into shared ($V_{s}$) and private ($V_{p}$) variables, one has to enumerate only the reduced refinement $\prod_{v \in V_{s}} M_{v}$. For each of the shared-variable cells, the bins from blocks that depend on the shared variable are determined by lookup, while blocks whose binning variable is private contribute their bins independently via a local Cartesian product. If the number of shared variables is small the computational cost is dramatically reduced.
 
 % Bibliography
 
