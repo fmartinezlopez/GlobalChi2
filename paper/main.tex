@@ -144,6 +144,30 @@ The number of null directions $N_\text{null}$ depends on the overlap structure b
 
 \subsection{Effect of systematic uncertainties}
 
+Previously, we established that $C_{\text{stat}}$ is generically singular, with $N_{\text{null}} = N_{\text{bins}} - \mathrm{rank}(A)$ degenerate directions that can be separated into structural and kinematic contributions. Whether the total covariance $C_{\text{total}} = C_{\text{stat}} + C_{\text{syst}}$ inherits the rank deficiency depends on which of these null directions receive support from the systematic uncertainties. Now, we examine the mechanisms by which different systematic treatments do or do not populate the null space of $C_{\text{stat}}$.
+
+A systematic variation $s$ produces a modified vector of expected events $\mathbf{n}_{s}$, whose departure from the central-value prediction can be expressed in terms of a shift vector:
+\begin{equation}
+    \bm{\delta}_{s} = \mathbf{n}_{s} - \mathbf{n}_{\text{CV}}.
+\end{equation}
+The different contributions to $C_{\text{syst}}$ are constructed from the outer product of these shift vectors. A null direction $\mathbf{x}$ of $C_{\text{stat}}$ remains a null direction of $C_{\text{total}}$ if and only if $\mathbf{x} \cdot \bm{\delta}_{s} = 0$ for every systematic variation in the uncertainty budget. The question is therefore whether the shift vectors have nonzero projections onto the structural and kinematic null spaces.
+
+Consider first the simplest case, where a systematic $s$ acts by reweighting the reconstructed event counts directly. Each event $e$ is assigned a modified weight $w_{e}^{(s)}$ while preserving its bin assignments. The shift vector can then be written as:
+\begin{equation}
+    \bm{\delta}_{s} = \sum_{e} (w_{e}^{(s)} - w_{e}) \, \bm{\phi}_{e}.
+\end{equation}
+For any null vector $\mathbf{x}$ which satisfies the null-space condition of Eq. \ref{eq:null_condition}, the projection onto the shift vector results:
+\begin{equation}
+    \begin{split}
+        \mathbf{x} \cdot \bm{\delta}_{s} &= \sum_{e} (w_{e}^{(s)} - w_{e}) \, (\bm{\phi}_{e} \cdot \mathbf{x})\\
+        &= \sum_{e} (w_{e}^{(s)} - w_{e}) \sum_{i=1}^{N_{\text{bins}}} \phi_{e,i}\, x_{i}\\
+        &= 0,
+    \end{split}
+\end{equation}
+since the inner sum vanishes for every event. Direct reweighting therefore preserves the entire null space, adding no rank to $C_{\text{total}}$. Flux uncertainties, which modify the neutrino energy spectrum through per-event weights, are the classic example. Cross-section model variations and hadronic reinteraction uncertainties, when implemented as per-event reweighting, behave identically.
+
+A qualitatively different situation arises when the systematic variation modifies the detector response matrix rather than the event weights.
+
 \subsection{Ignoring inter-block correlations}
 
 \section{Range projection method}
