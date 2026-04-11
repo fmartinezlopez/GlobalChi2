@@ -12,10 +12,11 @@
 \title{\boldmath Goodness-of-fit for multi-distribution neutrino cross-section measurements with shared events}
 
 \author{F. Mart\'inez L\'opez}
+\author{and T. Mohayai}
 \affiliation{Department of Physics, Indiana University,\\727 E. Third St., Bloomington, IN, USA, 47405}
 
 % E-mail addresses: only for the corresponding author
-\emailAdd{frmar@iu.edu}
+\emailAdd{frmart@iu.edu}
 
 \abstract{When multiple differential cross-section distributions are extracted from a common event sample with correctly evaluated inter-distribution correlations, the statistical covariance matrix is generically singular. Exact linear constraints from event sharing across measurements, such as equal distribution totals when all selected events populate bins in every distribution, produce directions with zero statistical variance. Systematic uncertainties restore formal invertibility but leave near-singular directions that yield unphysically inflated $\chi^{2}$ values in global goodness-of-fit tests. We present a projection method that restricts the test to the subspace carrying independent statistical information, yielding a $\chi^{2}$ distributed with $N_\text{bins} - N_\text{null}$ degrees of freedom, where $N_\text{null}$ is the number of independent constraints. The method is connected to established results on hypothesis testing with singular covariance matrices and validated with both an analytical toy model and a realistic simulated neutrino--argon cross-section measurement including unfolding and parametrized multi-source systematic uncertainties.}
 
@@ -81,26 +82,26 @@ For each event $e$, we can define the indicator vector $\bm{\phi}_{e} \coloneqq 
 
 This outer-product decomposition makes the rank structure of $C_{\text{stat}}$ clear. The rank of the statistical covariance matrix equals the dimension of $\mathrm{span}\{\bm{\phi}_e\}$, which depends only on the distinct indicator vectors present, not on their weights. Since all weights are $w_{e} > 0$ no indicator vector is removed from the sum, and the column space of $C_{\text{stat}}$ is exactly $\mathrm{span}\{\bm{\phi}_e\}$.
 
-We define the bin-combination matrix $A$ as the matrix whose rows are the unique indicator vectors among $\{\bm{\phi}_e\}$. Each row of $A$ represent a distinct pattern of bin occupancy across the blocks. By construction the row space of $A$ equals $\mathrm{span}\{\bm{\phi}_e\}$, and therefore:
+We define the bin-combination matrix $\Omega$ as the matrix whose rows are the unique indicator vectors among $\{\bm{\phi}_e\}$. Each row of $\Omega$ represent a distinct pattern of bin occupancy across the blocks. By construction the row space of $\Omega$ equals $\mathrm{span}\{\bm{\phi}_e\}$, and therefore:
 \begin{equation}\label{eq:rank_formula}
-    \mathrm{rank} (C_{\text{stat}}) = \mathrm{rank} (A).
+    \mathrm{rank} (C_{\text{stat}}) = \mathrm{rank} (\Omega).
 \end{equation}
 The number of degenerate directions is then:
 \begin{equation}\label{eq:nnull}
-    N_{\text{null}} = N_{\text{bins}} - \mathrm{rank} (A).
+    N_{\text{null}} = N_{\text{bins}} - \mathrm{rank} (\Omega).
 \end{equation}
 
-Physically, each of the $N_{\text{null}}$ directions corresponds to a linear combination of bins along which the measurement has identically zero variance. Any component of the residual vector along such a direction is not perceived by the statistical covariance; it is a direction that the measurement has no statistical power to constrain. Importantly, both $A$ and $N_{\text{null}}$ are directly computable from the MC event-to-bin mapping alone, before constructing any covariance matrix.
+Physically, each of the $N_{\text{null}}$ directions corresponds to a linear combination of bins along which the measurement has identically zero variance. Any component of the residual vector along such a direction is not perceived by the statistical covariance; it is a direction that the measurement has no statistical power to constrain. Importantly, both $\Omega$ and $N_{\text{null}}$ are directly computable from the MC event-to-bin mapping alone, before constructing any covariance matrix.
 
 A vector $\mathbf{x}$ is in the null space of $C_{\text{stat}}$ if and only if, for every event $e$:
 \begin{equation}\label{eq:null_condition}
     \sum_{i \in \text{bins}(e)} x_{i} = 0,
 \end{equation}
-or equivalently $A \mathbf{x} = 0$. Each unique indicator vector acts as a linear constraint on the null-space vectors, requiring that the components of $\mathbf{x}$ sum to zero over the bins populated by the different events. The null space directions can be divided into two physically distinct categories: structural constraints that follow from the block topology alone, and kinematic constraints that depend on which regions of phase space are populated.
+or equivalently $\Omega \mathbf{x} = 0$. Each unique indicator vector acts as a linear constraint on the null-space vectors, requiring that the components of $\mathbf{x}$ sum to zero over the bins populated by the different events. The null space directions can be divided into two physically distinct categories: structural constraints that follow from the block topology alone, and kinematic constraints that depend on which regions of phase space are populated.
 
 \subsection{Determination of the structural null space}
 
-The combination matrix $A$ presented previously is constructed from MC events. One determines which events populate the different bins and collects the unique indicator vectors. However, the indicator vectors that can appear are constrained by two distinct mechanisms. The first is purely structural, the geometry of the binning scheme forbids certain bin combinations. The second is kinematic, correlations between the different variables render some combinations unreachable even though they are geometrically allowed. These constraints are imposed by the underlying physics effects, mainly the differential cross section and the detector acceptance. In the following, we show that the structural constraints can be determined a priori, without generating MC events, from the bin edges used.
+The combination matrix $\Omega$ presented previously is constructed from MC events. One determines which events populate the different bins and collects the unique indicator vectors. However, the indicator vectors that can appear are constrained by two distinct mechanisms. The first is purely structural, the geometry of the binning scheme forbids certain bin combinations. The second is kinematic, correlations between the different variables render some combinations unreachable even though they are geometrically allowed. These constraints are imposed by the underlying physics effects, mainly the differential cross section and the detector acceptance. In the following, we show that the structural constraints can be determined a priori, without generating MC events, from the bin edges used.
 
 The variables used in a measurement are drawn from a set $\{v_{1}, \ldots v_{D}\}$. Each block $b$ uses a subset of these variables, $\mathrm{vars}(b) \subseteq \{v_{1}, \ldots v_{D}\}$. Restricting the discussion to combinations of single- and double-differential measurements, we have $|\mathrm{vars}(b)| \in \{1,2\}$ for every $b$. For each variable $v$ used in a given block $b$, the binning scheme defines a set of bin edges $E_{v}^{(b)}$ that partition the range of $v$ into intervals. In the case of a two-dimensional block, the edges in the binning variable may be slice-dependent, but nevertheless these can be collected into a single set of edges per variable across slices. For each variable $v \in \bigcup_{b} \mathrm{vars}(b)$, we can define the refined edges:
 \begin{equation}
@@ -121,20 +122,20 @@ Each cell $c \in \mathcal{R}$ specifies a refined bin index for every variable i
 \end{equation}
 If block $b$ does not use variable $v$ then $\beta_{b}$ is independent of the refined bin index in $v$. Therefore, multiple cells may produce identical indicator vectors.
 
-The structural combination matrix $A_{\text{struct}}$ is defined as the matrix whose rows are the unique indicator vectors from the cells of the common refinement $\{\bm{\phi}_{c} \, : \, c \in \mathcal{R}\}$. By construction, every indicator vector that appears in the $A$ matrix obtained from the MC events is also present in $A_{\text{struct}}$, therefore:
+The structural combination matrix $\Omega_{\text{struct}}$ is defined as the matrix whose rows are the unique indicator vectors from the cells of the common refinement $\{\bm{\phi}_{c} \, : \, c \in \mathcal{R}\}$. By construction, every indicator vector that appears in the $\Omega$ matrix obtained from the MC events is also present in $\Omega_{\text{struct}}$, therefore:
 \begin{equation}
-    \mathrm{rank}(A) \leq \mathrm{rank}(A_{\text{struct}}) \leq N_{\text{bins}}.
+    \mathrm{rank}(\Omega) \leq \mathrm{rank}(\Omega_{\text{struct}}) \leq N_{\text{bins}}.
 \end{equation}
 This hierarchy motivates a decomposition of the total number of degenerate directions:
 \begin{equation}
     \begin{split}
-        N_{\text{null}} &= N_{\text{bins}} - \mathrm{rank}(A_{\text{struct}}) + \mathrm{rank}(A_{\text{struct}}) - \mathrm{rank}(A)\\
+        N_{\text{null}} &= N_{\text{bins}} - \mathrm{rank}(\Omega_{\text{struct}}) + \mathrm{rank}(\Omega_{\text{struct}}) - \mathrm{rank}(\Omega)\\
         &= N_{\text{null}}^{\text{struct}} + N_{\text{null}}^{\text{kinem}}.
     \end{split}    
 \end{equation}
-The first term, $N_{\text{null}}^{\text{struct}}$, counts null directions that arise purely from the binning geometry and is computable a priori from the bin edges alone. The second term, $N_{\text{null}}^{\text{kinem}}$, accounts for additional null directions introduced by phase-space restrictions that exclude geometrically allowed combinations and can only be determined from Monte Carlo. A description of the algorithm used to compute $A_{\text{struct}}$, including an optimization that restricts the enumeration to shared variables, is presented in Appendix \ref{app:algorithm}.
+The first term, $N_{\text{null}}^{\text{struct}}$, counts null directions that arise purely from the binning geometry and is computable a priori from the bin edges alone. The second term, $N_{\text{null}}^{\text{kinem}}$, accounts for additional null directions introduced by phase-space restrictions that exclude geometrically allowed combinations and can only be determined from Monte Carlo. A description of the algorithm used to compute $\Omega_{\text{struct}}$, including an optimization that restricts the enumeration to shared variables, is presented in Appendix \ref{app:algorithm}.
 
-The structure of the null space of $A_{\text{struct}}$ depends on how the bin edges for the different blocks overlap. In the simplest case, when blocks do not share variables, every combination of one bin per block is allowed. The resulting null space is $(B-1)$-dimensional, with a single constraint that requires all block totals to be equal. When blocks share one or more variables, the allowed combinations are restricted and the dimension of the null space can be different from $B-1$. The number of null directions depends on how shared variable bin edges are aligned between blocks. Aligned slice edges decouple the measurement into different sub-problems, adding additional sum rules and increasing $N_{\text{null}}^{\text{struct}}$. On the other hand, misaligned edges couple adjacent distributions, potentially reducing the number of constraints. In the general case, the interplay between shared variables, bin edge alignment, and block topology makes a closed-form expression impractical, but the computation of $\mathrm{rank}(A_{\text{struct}})$ from the bin edge specifications is straightforward.
+The structure of the null space of $\Omega_{\text{struct}}$ depends on how the bin edges for the different blocks overlap. In the simplest case, when blocks do not share variables, every combination of one bin per block is allowed. The resulting null space is $(B-1)$-dimensional, with a single constraint that requires all block totals to be equal. When blocks share one or more variables, the allowed combinations are restricted and the dimension of the null space can be different from $B-1$. The number of null directions depends on how shared variable bin edges are aligned between blocks. Aligned slice edges decouple the measurement into different sub-problems, adding additional sum rules and increasing $N_{\text{null}}^{\text{struct}}$. On the other hand, misaligned edges couple adjacent distributions, potentially reducing the number of constraints. In the general case, the interplay between shared variables, bin edge alignment, and block topology makes a closed-form expression impractical, but the computation of $\mathrm{rank}(\Omega_{\text{struct}})$ from the bin edge specifications is straightforward.
 
 The structural and kinematic components of the null space respond differently to systematic uncertainties. Whether these cause the rank deficiency of $C_{\text{stat}}$ to persist, partially resolve, or fully resolve in the total covariance $C_{\text{total}}$ depends on the nature of the systematic treatment, which we discuss next.
 
@@ -144,7 +145,7 @@ The number of null directions $N_\text{null}$ depends on the overlap structure b
 
 \subsection{Effect of systematic uncertainties}
 
-Previously, we established that $C_{\text{stat}}$ is generically singular, with $N_{\text{null}} = N_{\text{bins}} - \mathrm{rank}(A)$ degenerate directions that can be separated into structural and kinematic contributions. Whether the total covariance $C_{\text{total}} = C_{\text{stat}} + C_{\text{syst}}$ inherits the rank deficiency depends on which of these null directions receive support from the systematic uncertainties. Now, we examine the mechanisms by which different systematic treatments do or do not populate the null space of $C_{\text{stat}}$.
+Previously, we established that $C_{\text{stat}}$ is generically singular, with $N_{\text{null}} = N_{\text{bins}} - \mathrm{rank}(\Omega)$ degenerate directions that can be separated into structural and kinematic contributions. Whether the total covariance $C_{\text{total}} = C_{\text{stat}} + C_{\text{syst}}$ inherits the rank deficiency depends on which of these null directions receive support from the systematic uncertainties. Now, we examine the mechanisms by which different systematic treatments do or do not populate the null space of $C_{\text{stat}}$.
 
 A systematic variation $s$ produces a modified vector of expected events $\mathbf{n}_{s}$, whose departure from the central-value prediction can be expressed in terms of a shift vector:
 \begin{equation}
@@ -156,7 +157,7 @@ Consider first the simplest case, where a systematic $s$ acts by reweighting the
 \begin{equation}
     \bm{\delta}_{s} = \sum_{e} (w_{e}^{(s)} - w_{e}) \, \bm{\phi}_{e}.
 \end{equation}
-For any null vector $\mathbf{x}$ which satisfies the null-space condition of Eq. \ref{eq:null_condition}, the projection onto the shift vector results:
+For any null vector $\mathbf{x}$ which satisfies the null-space condition of Eq. \ref{eq:null_condition}, the projection of $\mathbf{x}$ onto the shift vector gives:
 \begin{equation}
     \begin{split}
         \mathbf{x} \cdot \bm{\delta}_{s} &= \sum_{e} (w_{e}^{(s)} - w_{e}) \, (\bm{\phi}_{e} \cdot \mathbf{x})\\
@@ -166,9 +167,23 @@ For any null vector $\mathbf{x}$ which satisfies the null-space condition of Eq.
 \end{equation}
 since the inner sum vanishes for every event. Direct reweighting therefore preserves the entire null space, adding no rank to $C_{\text{total}}$. Flux uncertainties, which modify the neutrino energy spectrum through per-event weights, are the classic example. Cross-section model variations and hadronic reinteraction uncertainties, when implemented as per-event reweighting, behave identically.
 
-A qualitatively different situation arises when the systematic variation modifies the detector response matrix rather than the event weights.
+A qualitatively different situation arises when the systematic uncertainties are propagated through the response matrix rather than changing the event counts per bin directly. In this approach, adopted as the standard prescription in MicroBooNE for neutrino interaction uncertainties \cite{Gardiner:2024gdy}, a modified response matrix $R_{s}'$, mapping true bins to reconstructed bins under the given variation, is constructed for each systematic uncertainty. This matrix is obtained either by reweighting the events used to build the nominal response matrix or from an independent MC sample with varied simulation parameters. In this case, the predicted reconstructed counts for systematic variation $s$ are:
+\begin{equation}
+    \mathbf{n}_{s} = R'_{s} \, \mathbf{t}_{\text{CV}},
+\end{equation}
+where $\mathbf{t}_{\text{CV}}$ is the central-value truth prediction. The shift vector is then:
+\begin{equation}
+    \bm{\delta}_{s} = (R_{s}' - R) \, \mathbf{t}_{\text{CV}}.
+\end{equation}
+Since $R$ is block-diagonal, the difference $R'_{s} - R$ acts independently on each block, projecting the nominal truth vector through block-specific changes in efficiency and migration. The per-event coupling that makes direct reweighting respect all null directions is absent in this prescription. When the weight of an event changes, it affects simultaneously every block it populates; the response-matrix method, in contrast, processes each block independently through its own sub-matrix. The projection of $\bm{\delta}_{s}$ onto any null vector, whether structural or kinematic, therefore involves differences in how each block responds to the same truth-level prediction, and in general is nonzero. Response-matrix variations thus break both types of null directions, regardless of how $R_{s}'$ is obtained.
 
-\subsection{Ignoring inter-block correlations}
+A third mechanism applies when systematic uncertainties are evaluated by directly comparing reconstructed event counts from independent MC samples simulated with nominal and varied parameters. In this case, the shift vector takes the form:
+\begin{equation}
+    \bm{\delta}_{s} = \sum_{e'} w_{e'}^{(s)} \, \bm{\phi}_{e'}^{(s)} - \sum_{e} w_e \, \bm{\phi}_{e},
+\end{equation}
+where the first sum runs over the events in the varied-model sample and the second sum over the nominal sample. Since each event in both samples populates exactly one bin per block, their difference projects to zero onto the structural null directions by an analogous argument to that used for the direct reweighting. Kinematic null directions, however, can be lifted if the variation scatters events into reconstructed-bin combinations absent in the nominal sample. In that case, new indicator vectors appear that are not rows of $\Omega$, potentially breaking the corresponding constraints. Detector systematic uncertainties, which usually require independent samples with modified simulation parameters that cannot be captured by event reweighting, are the typical example where this prescription is applied.
+
+In practice, whether the eigenvalues of $C_{\text{total}}$ along the formerly null directions are exactly zero or merely smaller than the physical eigenvalues, including these directions in a $\chi^{2}$ test via standard matrix inversion produces inflated values with the wrong effective number of degrees of freedom. A valid goodness-of-fit test must therefore be restricted to the subspace where the measurement carries genuine sensitivity, which is the role of the projection method developed in the following section.
 
 \section{Range projection method}
 
