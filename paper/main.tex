@@ -46,6 +46,7 @@ We present a method based on projecting onto the range (column space) of the sta
 Brief roadmap of sections.
 
 \section{Rank deficiency of the statistical covariance}
+\label{sec:rank_deficiency}
 
 Consider a neutrino cross-section analysis simultaneously measuring $B$ different flux-integrated differential cross sections, each with $N_b$ true bins. If the measurement is extracted from a common event sample then each selected event will populate exactly one bin in each distribution it belongs to. Recent MicroBooNE analyses \cite{MicroBooNE:2024yzp} have adopted the blockwise unfolding approach presented in Ref. \cite{Gardiner:2024gdy} to simultaneous cross-section measurements.
 
@@ -185,7 +186,11 @@ where the first sum runs over the events in the varied-model sample and the seco
 
 In practice, whether the eigenvalues of $C_{\text{total}}$ along the formerly null directions are exactly zero or merely smaller than the physical eigenvalues, including these directions in a $\chi^{2}$ test via standard matrix inversion produces inflated values with the wrong effective number of degrees of freedom. A valid goodness-of-fit test must therefore be restricted to the subspace where the measurement carries genuine sensitivity, which is the role of the projection method developed in the following section.
 
-\section{Range projection method}
+\section{Range-projected \boldmath{$\chi^{2}$} statistic}
+
+The analysis of Sec. \ref{sec:rank_deficiency} established that the statistical covariance matrix $C_{\text{stat}}$ is in general rank-deficient, with $N_{\text{null}}$ directions along which the measurement carries no statistical sensitivity. A global goodness-of-fit must therefore be formulated in the subspace where independent statistical information is available.
+
+The rank structure discussed previously was established at the level of reconstructed event counts. The blockwise unfolding procedure of Ref. \cite{Gardiner:2024gdy} propagates the full covariance matrix through the block-diagonal unfolding matrix, which is invertible by construction.
 
 the SVD decomposition of the statistical covariance matrix as:
 \begin{equation}
@@ -199,14 +204,13 @@ and that $r = \mathrm{rank}(C_{\text{stat}})$. partitionings of $U = [U_{r} | \b
     \end{split}
 \end{equation}
 
-\subsection{Constructing the projector}
-
 \subsection{Projected chi-squared}
 
 \subsection{Proof sketch / justification}
 
 \subsection{Relation to alternative approaches}
 
+\begin{comment}
 \section{Analytical demonstration}
 
 \begin{figure}[!h]
@@ -245,6 +249,7 @@ and that $r = \mathrm{rank}(C_{\text{stat}})$. partitionings of $U = [U_{r} | \b
 \section{Connection to the statistics literature}
 
 \section{Summary and recommendations}
+\end{comment}
 
 \acknowledgments
 
