@@ -1,0 +1,39 @@
+# Example 1D binning
+# CCQE-like measurement
+# Alternating mutually exclusive selections (e.g. FC and PC)
+#
+# Variable indices:
+#   0 = Pmu       (muon momentum)
+#   1 = Cosmu     (cos theta muon)
+#
+# Selection indices:
+#   0 = FC        (fully contained)
+#   1 = PC        (partially contained)
+#
+# Format:
+#   block <block_idx> <bin_var_idx> sel <sel_idx>
+#   <bin_edge_0> <bin_edge_1> ... <bin_edge_N>
+
+# ═══════════════════════════════════════════════════════════════════
+# Block 0: FC selection (sel 0), binned in Pmu (var 0)
+# ═══════════════════════════════════════════════════════════════════
+block 0 0 sel 0
+0.00 0.15 0.30 0.50 0.75 1.20
+
+# ═══════════════════════════════════════════════════════════════════
+# Block 1: PC selection (sel 1), binned in Pmu (var 0)
+# ═══════════════════════════════════════════════════════════════════
+block 1 0 sel 1
+0.00 0.15 0.30 0.50 0.75 1.20
+
+# ═══════════════════════════════════════════════════════════════════
+# Block 2: FC selection (sel 0), binned in Cosmu (var 1)
+# ═══════════════════════════════════════════════════════════════════
+block 2 1 sel 0
+-1.00 -0.50 0.00 0.40 0.70 1.00
+
+# ═══════════════════════════════════════════════════════════════════
+# Block 3: PC selection (sel 1), binned in Cosmu (var 1)
+# ═══════════════════════════════════════════════════════════════════
+block 3 1 sel 1
+-1.00 -0.50 0.00 0.40 0.70 1.00

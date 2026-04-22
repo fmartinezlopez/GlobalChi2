@@ -3,6 +3,9 @@ Build the structural bin-combination matrix A from a binning configuration file.
 Decomposes variables into shared (used by 2+ blocks) and private (used by 1 block),
 enumerates only over shared variables, and expands private-variable bin choices.
 
+Supports selection indices: blocks with different selection indices represent
+mutually exclusive event populations and are treated independently.
+
 Usage:
     python structural.py <config_file>
 """
@@ -15,7 +18,11 @@ import time
 # ── Parsing bin config ─────────────────────────────────────────────────────
 
 def parse_binning_config(filename):
-    """Parse binning configuration from a text file."""
+    """Parse binning configuration from a text file.
+
+    Supports optional 'sel <idx>' at end of block header to specify
+    mutually exclusive event selections.  Default selection is 0.
+    """
     blocks = []
 
     with open(filename, "r") as f:
@@ -33,7 +40,18 @@ def parse_binning_config(filename):
 
         block_idx = int(parts[1])
 
-        if len(parts) == 3:
+        # Check for 'sel <idx>' at end of header
+        sel_idx = 0
+        if len(parts) >= 2 and "sel" in parts:
+            sel_pos = parts.index("sel")
+            sel_idx = int(parts[sel_pos + 1])
+            # Remove sel and its argument for dimension detection
+            parts = parts[:sel_pos]
+
+        n_var_parts = len(parts) - 2  # subtract 'block' and block_idx
+
+        if n_var_parts == 1:
+            # 1D block
             var_idx = int(parts[2])
             i += 1
             edges = list(map(float, lines[i].split()))
@@ -41,12 +59,14 @@ def parse_binning_config(filename):
                 "idx": block_idx,
                 "dim": 1,
                 "var": var_idx,
+                "sel": sel_idx,
                 "edges": edges,
                 "n_bins": len(edges) - 1,
             })
             i += 1
 
-        elif len(parts) == 4:
+        elif n_var_parts == 2:
+            # 2D block
             slice_var_idx = int(parts[2])
             bin_var_idx = int(parts[3])
             i += 1
@@ -77,6 +97,7 @@ def parse_binning_config(filename):
                 "dim": 2,
                 "slice_var": slice_var_idx,
                 "bin_var": bin_var_idx,
+                "sel": sel_idx,
                 "slice_edges": sorted(all_slice_edges),
                 "slices": slices,
                 "n_bins": sum(s["n_bins"] for s in slices),
@@ -214,22 +235,24 @@ def _expand_representative(block_bin_options):
 
 
 # Threshold: if the full Cartesian product exceeds this, use representative
-_MAX_FULL_EXPAND = 0
+_MAX_FULL_EXPAND = 500_000
 
 
-def build_structural_A(blocks, verbose=True):
-    """Build the structural bin-combination matrix using shared/private
-    variable decomposition.
-      1. Classify variables as 'shared' (used by 2+ blocks) or 'private'.
-      2. Compute refined edges only for shared variables.
-      3. Enumerate over the shared-variable refined Cartesian product.
-      4. For each shared cell, either fully expands or uses representative
-         subset for private-variable choices.
+def _build_A_for_selection(sel_blocks, n_bins_total, verbose=True,
+                           sel_label=""):
+    """Build the structural A matrix for a single selection group.
+
+    The blocks already have their global _offset set (pointing into
+    the full bin vector), so the resulting rows of A have the correct
+    column positions even though we only enumerate over this selection's
+    blocks.
     """
 
-    # ── Classify variables ───────────────────────────────────────────
-    var_usage = {}  # var_idx -> set of block indices that use it
-    for b in blocks:
+    prefix = f"[sel {sel_label}] " if sel_label else ""
+
+    # ── Classify variables (within this selection only) ───────────
+    var_usage = {}
+    for b in sel_blocks:
         if b["dim"] == 1:
             var_usage.setdefault(b["var"], set()).add(b["idx"])
         elif b["dim"] == 2:
@@ -240,12 +263,12 @@ def build_structural_A(blocks, verbose=True):
     private_vars = {v for v, users in var_usage.items() if len(users) == 1}
 
     if verbose:
-        print(f"Shared variables:  {sorted(shared_vars)}")
-        print(f"Private variables: {sorted(private_vars)}")
+        print(f"{prefix}Shared variables:  {sorted(shared_vars)}")
+        print(f"{prefix}Private variables: {sorted(private_vars)}")
 
     # ── Refined edges for shared variables only ──────────────────────
     shared_var_edges = {}
-    for block in blocks:
+    for block in sel_blocks:
         if block["dim"] == 1:
             v = block["var"]
             if v in shared_vars:
@@ -267,29 +290,16 @@ def build_structural_A(blocks, verbose=True):
     shared_vars_sorted = sorted(shared_refined.keys())
 
     if verbose:
-        print("\nShared variable refined bins:")
         for v in shared_vars_sorted:
-            print(f"  var {v}: {shared_n_refined[v]} refined bins, "
-                  f"edges = {shared_refined[v]}")
+            print(f"{prefix}  var {v}: {shared_n_refined[v]} refined bins")
         n_shared_cells = 1
         for v in shared_vars_sorted:
             n_shared_cells *= shared_n_refined[v]
-        print(f"\nShared-variable cells to enumerate: {n_shared_cells}")
-
-    # ── Global bin offsets per block ──────────────────────────────────
-    n_bins_total = 0
-    for block in blocks:
-        block["_offset"] = n_bins_total
-        n_bins_total += block["n_bins"]
-
-    if verbose:
-        print(f"Total bins: {n_bins_total}")
-        for b in blocks:
-            print(f"  Block {b['idx']}: offset={b['_offset']}, "
-                  f"n_bins={b['n_bins']}")
+        print(f"{prefix}Shared-variable cells to enumerate: "
+              f"{n_shared_cells}")
 
     # ── Classify each block's variable usage ─────────────────────────
-    for block in blocks:
+    for block in sel_blocks:
         if block["dim"] == 1:
             block["_shared_type"] = ("shared" if block["var"] in shared_vars
                                      else "private")
@@ -305,11 +315,6 @@ def build_structural_A(blocks, verbose=True):
             else:
                 block["_shared_type"] = "both_private"
 
-    if verbose:
-        print("\nBlock variable classification:")
-        for b in blocks:
-            print(f"  Block {b['idx']}: {b['_shared_type']}")
-
     # ── Enumerate shared cells and expand ────────────────────────────
     shared_ranges = [range(shared_n_refined[v]) for v in shared_vars_sorted]
     unique_combinations = set()
@@ -322,18 +327,16 @@ def build_structural_A(blocks, verbose=True):
     for shared_cell in product(*shared_ranges):
         n_shared_enum += 1
 
-        # Compute midpoints for each shared variable
         shared_mids = {}
         for i, v in enumerate(shared_vars_sorted):
             edges = shared_refined[v]
             shared_mids[v] = 0.5 * (edges[shared_cell[i]]
                                      + edges[shared_cell[i] + 1])
 
-        # For each block, determine possible global bins
         block_bin_options = []
         valid = True
 
-        for block in blocks:
+        for block in sel_blocks:
             opts = _get_block_bins_for_shared_cell(
                 block, shared_mids, shared_vars)
             if opts is None:
@@ -344,7 +347,6 @@ def build_structural_A(blocks, verbose=True):
         if not valid:
             continue
 
-        # Check size of full Cartesian product
         full_size = 1
         for opts in block_bin_options:
             full_size *= len(opts)
@@ -352,22 +354,14 @@ def build_structural_A(blocks, verbose=True):
                 break
 
         if full_size <= _MAX_FULL_EXPAND:
-            # Full expansion is tractable
             for combo in product(*block_bin_options):
                 n_total_combos += 1
                 unique_combinations.add(combo)
         else:
-            # Use representative subset that spans the same column space
             n_representative_used += 1
             rep = _expand_representative(block_bin_options)
             n_total_combos += len(rep)
             unique_combinations.update(rep)
-
-        if verbose and n_shared_enum % 500 == 0:
-            elapsed = time.time() - t0
-            print(f"  ... {n_shared_enum} shared cells processed, "
-                  f"{len(unique_combinations)} unique so far "
-                  f"({elapsed:.1f}s)")
 
     elapsed = time.time() - t0
 
@@ -380,13 +374,66 @@ def build_structural_A(blocks, verbose=True):
             A[i, global_bin] = 1
 
     if verbose:
-        print(f"\nShared cells enumerated: {n_shared_enum}")
-        print(f"Total combos expanded: {n_total_combos}")
-        if n_representative_used > 0:
-            print(f"Representative expansion used: "
-                  f"{n_representative_used} shared cells")
-        print(f"Unique indicator vectors (rows of A): {n_rows}")
-        print(f"Time: {elapsed:.2f}s")
+        print(f"{prefix}Rows: {n_rows}, "
+              f"combos expanded: {n_total_combos}, "
+              f"representative used: {n_representative_used}, "
+              f"time: {elapsed:.2f}s")
+
+    return A
+
+
+def build_structural_A(blocks, verbose=True):
+    """Build the structural bin-combination matrix, handling multiple
+    mutually exclusive selections.
+
+    Blocks are grouped by their 'sel' index. Each selection group is
+    processed independently (no event shares across selections), and
+    the resulting matrices are stacked vertically.
+    """
+
+    # ── Global bin offsets (across ALL blocks, all selections) ────
+    n_bins_total = 0
+    for block in blocks:
+        block["_offset"] = n_bins_total
+        n_bins_total += block["n_bins"]
+
+    if verbose:
+        print(f"Total bins: {n_bins_total}")
+        for b in blocks:
+            print(f"  Block {b['idx']} (sel {b['sel']}): "
+                  f"offset={b['_offset']}, n_bins={b['n_bins']}")
+
+    # ── Group blocks by selection ────────────────────────────────
+    sel_groups = {}
+    for b in blocks:
+        sel_groups.setdefault(b["sel"], []).append(b)
+
+    sel_indices = sorted(sel_groups.keys())
+
+    if verbose:
+        print(f"\nSelections: {sel_indices}")
+        for s in sel_indices:
+            block_ids = [b["idx"] for b in sel_groups[s]]
+            print(f"  sel {s}: blocks {block_ids}")
+        print()
+
+    # ── Build A per selection and stack ───────────────────────────
+    A_parts = []
+    for s in sel_indices:
+        if verbose:
+            print(f"── Selection {s} "
+                  f"({len(sel_groups[s])} blocks) ──")
+        A_sel = _build_A_for_selection(
+            sel_groups[s], n_bins_total, verbose=verbose,
+            sel_label=str(s))
+        A_parts.append(A_sel)
+        if verbose:
+            print()
+
+    A = np.vstack(A_parts)
+
+    if verbose:
+        print(f"Combined A: {A.shape[0]} rows × {A.shape[1]} columns")
 
     return A, n_bins_total
 
@@ -428,11 +475,14 @@ def analyze_structural_A(A, n_bins, blocks=None, verbose=True):
                     vals = vec[o:o + n]
                     nz = np.count_nonzero(np.abs(vals) > 1e-10)
                     if nz > 0:
-                        print(f"    Block {b['idx']} (bins {o}-{o+n-1}): "
+                        sel_str = f", sel={b['sel']}" if "sel" in b else ""
+                        print(f"    Block {b['idx']}{sel_str} "
+                              f"(bins {o}-{o+n-1}): "
                               f"{np.round(vals, 4)}")
                     else:
-                        print(f"    Block {b['idx']} (bins {o}-{o+n-1}): "
-                              f"[all zero]")
+                        sel_str = f", sel={b['sel']}" if "sel" in b else ""
+                        print(f"    Block {b['idx']}{sel_str} "
+                              f"(bins {o}-{o+n-1}): [all zero]")
         elif verbose:
             print(f"\nNull-space basis vectors (columns):")
             print(np.round(null_vecs, 4))
@@ -452,13 +502,14 @@ if __name__ == "__main__":
     blocks = parse_binning_config(sys.argv[1])
     print("Parsed blocks:")
     for b in blocks:
+        sel_str = f", sel={b['sel']}"
         if b["dim"] == 1:
-            print(f"  Block {b['idx']}: 1D, var={b['var']}, "
-                  f"n_bins={b['n_bins']}, edges={b['edges'][:3]}...{b['edges'][-2:]}")
+            print(f"  Block {b['idx']}: 1D, var={b['var']}{sel_str}, "
+                  f"n_bins={b['n_bins']}")
         else:
             print(f"  Block {b['idx']}: 2D, slice_var={b['slice_var']}, "
-                  f"bin_var={b['bin_var']}, n_bins={b['n_bins']}, "
-                  f"n_slices={len(b['slices'])}")
+                  f"bin_var={b['bin_var']}{sel_str}, "
+                  f"n_bins={b['n_bins']}, n_slices={len(b['slices'])}")
     print()
 
     A, n_bins = build_structural_A(blocks)
