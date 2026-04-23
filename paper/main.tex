@@ -45,12 +45,12 @@ A natural use of these combined measurements is computing global goodness-of-fit
 % Motivation for paper
 We present a method to correctly compute a global goodness-of-fit test statistic for multi-distribution measurements with shared events. The approach is based on identifying the constrained directions from the bin structure of the measurement and projecting the statistic onto the subspace where independent statistical information is available. We refer to the resulting test statistic as the range-projected $\chi^2$. We demonstrate the method using a pedagogical toy example and connect it to the established statistical literature on hypothesis testing with singular covariance matrices.
 
-\section{Rank deficiency of the statistical covariance}
-\label{sec:rank_deficiency}
+\section{Constraints from shared events}
+\label{sec:constraints}
 
 Consider a neutrino cross-section analysis simultaneously measuring $B$ different flux-integrated differential cross sections, each with $N_b$ true bins. If the measurement is extracted from a common event sample then each selected event will populate exactly one bin in each distribution it belongs to. Recent MicroBooNE analyses \cite{MicroBooNE:2024yzp} have adopted the blockwise unfolding approach presented in Ref. \cite{Gardiner:2024gdy} to simultaneous cross-section measurements.
 
-This method provides a systematic framework for reporting the correlations between the different extracted differential cross sections. It provides a general prescription to construct statistical covariance matrices that respect the correlations between bins in different distributions or blocks. The full inter-block covariance matrix constructed in reconstructed space is propagated through unfolding using a block-diagonal unfolding matrix, obtained as a direct sum of the individual unfolding matrices computed for each block. The result of the combined measurement is a vector of $N_{\text{bins}} = \sum_{b=1}^{B} N_b$ cross-section values with an $N_{\text{bins}} \times N_{\text{bins}}$ covariance matrix.
+This method provides a systematic framework for reporting the correlations between the different extracted differential cross sections. It provides a general prescription to construct statistical covariance matrices that respect the correlations between bins in different distributions or blocks. The full inter-block covariance matrix constructed in reconstructed space is propagated through unfolding using a block-diagonal unfolding matrix, obtained as a direct sum of the individual unfolding matrices computed for each block. The result of the combined measurement is a vector of $N_{\text{bins}} = \sum_{b=1}^{B} N_b$ cross-section values with an $N_{\text{bins}} \times N_{\text{bins}}$ covariance matrix. The total covariance decomposes as $C_{\text{total}} = C_{\text{stat}} + C_{\text{syst}}$, where the statistical covariance component, computed from the shared-event structure, encodes the constraints described in the introduction.
 
 \subsection{Statistical covariance from shared events}
 
@@ -92,7 +92,7 @@ The number of degenerate directions is then:
     N_{\text{null}} = N_{\text{bins}} - \mathrm{rank} (\Omega).
 \end{equation}
 
-Physically, each of the $N_{\text{null}}$ directions corresponds to a linear combination of bins along which the measurement has identically zero variance. Any component of the residual vector along such a direction is not perceived by the statistical covariance; it is a direction that the measurement has no statistical power to constrain. Importantly, both $\Omega$ and $N_{\text{null}}$ are directly computable from the MC event-to-bin mapping alone, before constructing any covariance matrix.
+Physically, each of the $N_{\text{null}}$ directions corresponds to a linear combination of bins along which the measurement has identically zero variance. Any component of the residual vector along such a direction is not perceived by the statistical covariance; it is a direction that the measurement has no statistical power to constrain. Importantly, both $\Omega$ and $N_{\text{null}}$ are directly computable from the MC event-to-bin mapping alone, before constructing any covariance matrix, confirming that the constraints are a property of the measurement geometry rather than the statistical treatment.
 
 A vector $\mathbf{x}$ is in the null space of $C_{\text{stat}}$ if and only if, for every event $e$:
 \begin{equation}\label{eq:null_condition}
@@ -136,6 +136,8 @@ This hierarchy motivates a decomposition of the total number of degenerate direc
 \end{equation}
 The first term, $N_{\text{null}}^{\text{struct}}$, counts null directions that arise purely from the binning geometry and is computable a priori from the bin edges alone. The second term, $N_{\text{null}}^{\text{kinem}}$, accounts for additional null directions introduced by phase-space restrictions that exclude geometrically allowed combinations and can only be determined from Monte Carlo. A description of the algorithm used to compute $\Omega_{\text{struct}}$, including an optimization that restricts the enumeration to shared variables, is presented in Appendix \ref{app:algorithm}.
 
+The presence of kinematic null directions indicate that certain regions of the combined bin space are empty, which may signal that the binning extends beyond the kinematic reach of the measurement or that it is finer than the available statistics can support. In such cases, merging or removing the offending bins may be preferable to relying on a projection to handle the resulting constraints. The structural null directions, by contrast are an unavoidable consequence of measuring multiple distributions from shared events and cannot be eliminated by rebinning.
+
 The structure of the null space of $\Omega_{\text{struct}}$ depends on how the bin edges for the different blocks overlap. In the simplest case, when blocks do not share variables, every combination of one bin per block is allowed. The resulting null space is $(B-1)$-dimensional, with a single constraint that requires all block totals to be equal. When blocks share one or more variables, the allowed combinations are restricted and the dimension of the null space can be different from $B-1$. The number of null directions depends on how shared variable bin edges are aligned between blocks. Aligned slice edges decouple the measurement into different sub-problems, adding additional sum rules and increasing $N_{\text{null}}^{\text{struct}}$. On the other hand, misaligned edges couple adjacent distributions, potentially reducing the number of constraints. In the general case, the interplay between shared variables, bin edge alignment, and block topology makes a closed-form expression impractical, but the computation of $\mathrm{rank}(\Omega_{\text{struct}})$ from the bin edge specifications is straightforward.
 
 The structural and kinematic components of the null space respond differently to systematic uncertainties. Whether these cause the rank deficiency of $C_{\text{stat}}$ to persist, partially resolve, or fully resolve in the total covariance $C_{\text{total}}$ depends on the nature of the systematic treatment, which we discuss next.
@@ -146,7 +148,7 @@ The number of null directions $N_\text{null}$ depends on the overlap structure b
 
 \subsection{Effect of systematic uncertainties}
 
-Previously, we established that $C_{\text{stat}}$ is generically singular, with $N_{\text{null}} = N_{\text{bins}} - \mathrm{rank}(\Omega)$ degenerate directions that can be separated into structural and kinematic contributions. Whether the total covariance $C_{\text{total}} = C_{\text{stat}} + C_{\text{syst}}$ inherits the rank deficiency depends on which of these null directions receive support from the systematic uncertainties. Now, we examine the mechanisms by which different systematic treatments do or do not populate the null space of $C_{\text{stat}}$.
+Previously, we established that the event-sharing structure imposes $N_{\text{null}} = N_{\text{bins}} - \mathrm{rank}(\Omega)$ exact linear constraints on the bin counts, which manifest as a rank deficiency of $C_{\text{stat}}$. Whether the total covariance matrix inherits the rank deficiency depends on which of these null directions receive support from the systematic uncertainties. Now, we examine the mechanisms by which different systematic treatments do or do not populate the null space of $C_{\text{stat}}$.
 
 A systematic variation $s$ produces a modified vector of expected events $\mathbf{n}_{s}$, whose departure from the central-value prediction can be expressed in terms of a shift vector:
 \begin{equation}
@@ -186,9 +188,9 @@ where the first sum runs over the events in the varied-model sample and the seco
 
 In practice, whether the eigenvalues of $C_{\text{total}}$ along the formerly null directions are exactly zero or merely smaller than the physical eigenvalues, including these directions in a $\chi^{2}$ test via standard matrix inversion produces inflated values with the wrong effective number of degrees of freedom. A valid goodness-of-fit test must therefore be restricted to the subspace where the measurement carries genuine sensitivity, which is the role of the projection method developed in the following section.
 
-\section{Range-projected \boldmath{$\chi^{2}$} statistic}
+\section{Range-projected \boldmath{$\chi^{2}$} test statistic}
 
-The analysis of Sec. \ref{sec:rank_deficiency} established that the statistical covariance matrix $C_{\text{stat}}$ is in general rank-deficient, with $N_{\text{null}}$ directions along which the measurement carries no statistical sensitivity. A global goodness-of-fit must therefore be formulated in the subspace where independent statistical information is available.
+The analysis of Sec. \ref{sec:constraints} established that the statistical covariance matrix $C_{\text{stat}}$ is in general rank-deficient, with $N_{\text{null}}$ directions along which the measurement carries no statistical sensitivity. A global goodness-of-fit must therefore be formulated in the subspace where independent statistical information is available.
 
 The rank structure discussed previously was established at the level of reconstructed event counts. The blockwise unfolding procedure of Ref. \cite{Gardiner:2024gdy} propagates the full covariance matrix through the block-diagonal unfolding matrix, which is invertible by construction.
 
