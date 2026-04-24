@@ -160,7 +160,7 @@ Consider first the simplest case, where a systematic $s$ acts by reweighting the
 \begin{equation}
     \bm{\delta}_{s} = \sum_{e} (w_{e}^{(s)} - w_{e}) \, \bm{\phi}_{e}.
 \end{equation}
-For any null vector $\mathbf{x}$ which satisfies the null-space condition of Eq. \ref{eq:null_condition}, the projection of $\mathbf{x}$ onto the shift vector gives:
+For any null vector $\mathbf{x}$ which satisfies the null-space condition of Eq. \eqref{eq:null_condition}, the projection of $\mathbf{x}$ onto the shift vector gives:
 \begin{equation}
     \begin{split}
         \mathbf{x} \cdot \bm{\delta}_{s} &= \sum_{e} (w_{e}^{(s)} - w_{e}) \, (\bm{\phi}_{e} \cdot \mathbf{x})\\
@@ -190,23 +190,48 @@ In practice, whether the eigenvalues of $C_{\text{total}}$ along the formerly nu
 
 \section{Range-projected \boldmath{$\chi^{2}$} test statistic}
 
-The analysis of Sec. \ref{sec:constraints} established that the statistical covariance matrix $C_{\text{stat}}$ is in general rank-deficient, with $N_{\text{null}}$ directions along which the measurement carries no statistical sensitivity. A global goodness-of-fit must therefore be formulated in the subspace where independent statistical information is available.
+The discussion presented in Sec. \ref{sec:constraints} established that the event-sharing structure of the multi-distribution measurement imposes $N_{\text{null}}$ linear constraints, encoded in the null space of the combination matrix $\Omega$, which emerges as a rank deficiency in $C_{\text{stat}}$. A global goodness-of-fit test statistic must therefore be formulated in the subspace orthogonal to these constrained directions, where independent statistical information is available.
 
-The rank structure discussed previously was established at the level of reconstructed event counts. The blockwise unfolding procedure of Ref. \cite{Gardiner:2024gdy} propagates the full covariance matrix through the block-diagonal unfolding matrix, which is invertible by construction.
-
-the SVD decomposition of the statistical covariance matrix as:
-\begin{equation}
-    C_{\text{stat}} = U \, \Sigma \, U^{\mathsf{T}},
+The constraints are most naturally identified in reconstructed space, where the combination matrix is constructed. The non-null subspace can be obtained decomposing $\Omega^{\mathsf{T}} \Omega$. This matrix is a square $N_{\text{bins}} \times N_{\text{bins}}$ matrix with the same column space and null space as $\Omega$ itself, making it a more compact representation of the same information. We can write its eigendecomposition as:
+\begin{equation}\label{eq:oto_svd}
+    \Omega^{\mathsf{T}} \Omega = V \, S \, V^{\mathsf{T}},
 \end{equation}
-and that $r = \mathrm{rank}(C_{\text{stat}})$. partitionings of $U = [U_{r} | \bar{U}_{r}]$
-\begin{equation}
-    \begin{split}
-        U_{r} U_{r}^{T} &= \text{projection on to } \mathrm{ran}(C_{\text{stat}})\\
-        \bar{U}_{r} \bar{U}_{r}^{T} &= \text{projection on to } \mathrm{null}(C_{\text{stat}})
-    \end{split}
+where $S = \mathrm{diag}(s_{1}, \ldots, s_{N_{\text{bins}}})$ contains the eigenvalues in decreasing order and $V$ is the orthogonal matrix of eigenvectors. Of these eigenvalues, $r = \mathrm{rank}(\Omega)$ are nonzero. Partitioning $V = [V_{r} \, | \, \bar{V}_{r}]$ into the columns associated with the nonzero and zero eigenvalues, the columns of $V_{r}$ span the subspace of reconstructed bin space that is not constrained by the event-sharing structure. The orthogonal projector onto this subspace is:
+\begin{equation}\label{eq:proj_reco}
+    P_{\text{reco}} = V_{r} \, V_{r}^{\mathsf{T}}.
 \end{equation}
+Note that $P_{\text{reco}}$ is identical to the projector onto the range of $C_{\text{stat}}$ as defined in Eq. \eqref{eq:cstat_outer}, since $C_{\text{stat}}$ and $\Omega^{\mathsf{T}} \Omega$ share the same column space by construction. The combination matrix formulation makes explicit the fact that the projector is determined by the measurement geometry.
 
-\subsection{Projected chi-squared}
+Cross-section measurements are typically reported in unfolded space, and it is in that space where goodness-of-fit tests are evaluated. The blockwise unfolding matrix $U$, which is block-diagonal and invertible, maps reconstructed-space vectors onto unfolded space. The non-null basis vectors propagate as $W_{r} = U \, V_{r}$. Since $U$ is not orthogonal in general, the columns of $W_{r}$ are not orthonormal, and the projector onto their span takes the general form:
+\begin{equation}\label{eq:proj_true}
+    P_{\text{true}} = W_{r} \, (W_{r}^{\mathsf{T}} \, W_{r})^{-1} \, W_{r}^{\mathsf{T}}.
+\end{equation}
+This projector identifies the subspace of unfolded bin space that carries independent statistical information, with detector response and unfolding effects properly accounted for. Since $U$ is invertible, $W_{r}$ has the same rank as $V_{r}$ and the number of constrained directions is preserved. A test statistic constructed from the projected covariance matrix would have $r = N_{\text{bins}} - N_{\text{null}}$ effective degrees of freedom.
+
+In practice, the eigenvalues of $\Omega^{\mathsf{T}} \Omega$ that are technically zero take small numerical values. The threshold for identifying these can be set relative to the largest eigenvalue (e.g., $s_{i} / s_{1} < 10^{-10}$). In most cases, a clear spectral gap of several orders of magnitude separates the physical eigenvalues from the numerical noise, making the identification unambiguous.
+
+\subsection{Test statistic definition}
+
+The goodness-of-fit test is evaluated in unfolded space, where the residual vector is defined as:
+\begin{equation}
+    \mathbf{r} = \hat{\bm{\varphi}} - A_{C} \, \bm{\varphi}_{\text{pred}},
+\end{equation}
+where $\hat{\bm{\varphi}} = U \mathbf{d}$ is the unfolded background-subtracted data, $A_{C} = U \, R$ is the additional smearing matrix \cite{Tang:2017rob}, and $\bm{\varphi}_{\text{pred}}$ is a truth-level model prediction. The range-projected $\chi{^2}$ in unfolded space is:
+\begin{equation}\label{eq:chi2_proj_unfd}
+    \chi^2_{\text{proj}} = \mathbf{r}^{\mathsf{T}} \, ( P_{\text{true}} \, V_{\text{total}} \, P_{\text{true}} )^{+} \, \mathbf{r},
+\end{equation}
+where $V_{\text{total}} = U \, C_{\text{total}} \, U^{\mathsf{T}}$ is the total covariance matrix in unfolded space and $^+$ denotes the Moore--Penrose pseudoinverse.
+
+The pseudoinverse can be avoided entirely by reducing the problem to $r$ dimensions. One can verify that the pseudoinverse of $P_{\text{true}} \, V_{\text{total}} \, P_{\text{true}}$ takes the
+closed form:
+\begin{equation}\label{eq:pinv_true}
+    ( P_{\text{true}} \, V_{\text{total}} \, P_{\text{true}} )^{+} = W_r \, ( W_r^{\mathsf{T}} \, V_{\text{total}} \, W_r )^{-1} \, W_r^{\mathsf{T}}.
+\end{equation}
+Substituting into Eq. \eqref{eq:chi2_proj_unfd} and defining the reduced residual $\tilde{\mathbf{r}} = W_r^{\mathsf{T}} \, \mathbf{r}$ and the reduced covariance matrix $\tilde{V}_{\text{total}} = W_r^{\mathsf{T}} \, V_{\text{total}} \, W_r$, the test statistic becomes:
+\begin{equation}\label{eq:chi2_reduced}
+    \chi^2_{\text{proj}} = \tilde{\mathbf{r}}^{\mathsf{T}} \, \tilde{V}_{\text{total}}^{-1} \, \tilde{\mathbf{r}},
+\end{equation}
+which involves only a standard inversion of the $r \times r$ matrix $\tilde{V}_{\text{total}}$. Under the null hypothesis, $\chi^2_{\text{proj}}$ follows a $\chi^2$ distribution with $r = N_{\text{bins}} - N_{\text{null}}$ degrees of freedom.
 
 \subsection{Proof sketch / justification}
 
