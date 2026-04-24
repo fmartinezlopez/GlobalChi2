@@ -170,15 +170,15 @@ For any null vector $\mathbf{x}$ which satisfies the null-space condition of Eq.
 \end{equation}
 since the inner sum vanishes for every event. Direct reweighting therefore preserves the entire null space, adding no rank to $C_{\text{total}}$. Flux uncertainties, which modify the neutrino energy spectrum through per-event weights, are the classic example. Cross-section model variations and hadronic reinteraction uncertainties, when implemented as per-event reweighting, behave identically.
 
-A qualitatively different situation arises when the systematic uncertainties are propagated through the response matrix rather than changing the event counts per bin directly. In this approach, adopted as the standard prescription in MicroBooNE for neutrino interaction uncertainties \cite{Gardiner:2024gdy}, a modified response matrix $R_{s}'$, mapping true bins to reconstructed bins under the given variation, is constructed for each systematic uncertainty. This matrix is obtained either by reweighting the events used to build the nominal response matrix or from an independent MC sample with varied simulation parameters. In this case, the predicted reconstructed counts for systematic variation $s$ are:
+A qualitatively different situation arises when the systematic uncertainties are propagated through the response matrix rather than changing the event counts per bin directly. In this approach, adopted as the standard prescription in MicroBooNE for neutrino interaction uncertainties \cite{Gardiner:2024gdy}, a modified response matrix $\Delta_{s}'$, mapping true bins to reconstructed bins under the given variation, is constructed for each systematic uncertainty. This matrix is obtained either by reweighting the events used to build the nominal response matrix or from an independent MC sample with varied simulation parameters. In this case, the predicted reconstructed counts for systematic variation $s$ are:
 \begin{equation}
-    \mathbf{n}_{s} = R'_{s} \, \mathbf{t}_{\text{CV}},
+    \mathbf{n}_{s} = \Delta'_{s} \, \bm{\varphi}_{\text{CV}},
 \end{equation}
-where $\mathbf{t}_{\text{CV}}$ is the central-value truth prediction. The shift vector is then:
+where $\bm{\varphi}_{\text{CV}}$ is the central-value truth prediction. The shift vector is then:
 \begin{equation}
-    \bm{\delta}_{s} = (R_{s}' - R) \, \mathbf{t}_{\text{CV}}.
+    \bm{\delta}_{s} = (\Delta_{s}' - \Delta) \, \bm{\varphi}_{\text{CV}}.
 \end{equation}
-Since $R$ is block-diagonal, the difference $R'_{s} - R$ acts independently on each block, projecting the nominal truth vector through block-specific changes in efficiency and migration. The per-event coupling that makes direct reweighting respect all null directions is absent in this prescription. When the weight of an event changes, it affects simultaneously every block it populates; the response-matrix method, in contrast, processes each block independently through its own sub-matrix. The projection of $\bm{\delta}_{s}$ onto any null vector, whether structural or kinematic, therefore involves differences in how each block responds to the same truth-level prediction, and in general is nonzero. Response-matrix variations thus break both types of null directions, regardless of how $R_{s}'$ is obtained.
+Since $\Delta$ is block-diagonal, the difference $\Delta'_{s} - \Delta$ acts independently on each block, projecting the nominal truth vector through block-specific changes in efficiency and migration. The per-event coupling that makes direct reweighting respect all null directions is absent in this prescription. When the weight of an event changes, it affects simultaneously every block it populates; the response-matrix method, in contrast, processes each block independently through its own sub-matrix. The projection of $\bm{\delta}_{s}$ onto any null vector, whether structural or kinematic, therefore involves differences in how each block responds to the same truth-level prediction, and in general is nonzero. Response-matrix variations thus break both types of null directions, regardless of how $\Delta_{s}'$ is obtained.
 
 A third mechanism applies when systematic uncertainties are evaluated by directly comparing reconstructed event counts from independent MC samples simulated with nominal and varied parameters. In this case, the shift vector takes the form:
 \begin{equation}
@@ -216,7 +216,7 @@ The goodness-of-fit test is evaluated in unfolded space, where the residual vect
 \begin{equation}
     \mathbf{r} = \hat{\bm{\varphi}} - A_{C} \, \bm{\varphi}_{\text{pred}},
 \end{equation}
-where $\hat{\bm{\varphi}} = U \mathbf{d}$ is the unfolded background-subtracted data, $A_{C} = U \, R$ is the additional smearing matrix \cite{Tang:2017rob}, and $\bm{\varphi}_{\text{pred}}$ is a truth-level model prediction. The range-projected $\chi{^2}$ in unfolded space is:
+where $\hat{\bm{\varphi}} = U \mathbf{d}$ is the unfolded background-subtracted data, $A_{C} = U \, \Delta$ is the additional smearing matrix \cite{Tang:2017rob}, and $\bm{\varphi}_{\text{pred}}$ is a truth-level model prediction. The range-projected $\chi{^2}$ in unfolded space is:
 \begin{equation}\label{eq:chi2_proj_unfd}
     \chi^2_{\text{proj}} = \mathbf{r}^{\mathsf{T}} \, ( P_{\text{true}} \, V_{\text{total}} \, P_{\text{true}} )^{+} \, \mathbf{r},
 \end{equation}
@@ -232,6 +232,20 @@ Substituting into Eq. \eqref{eq:chi2_proj_unfd} and defining the reduced residua
     \chi^2_{\text{proj}} = \tilde{\mathbf{r}}^{\mathsf{T}} \, \tilde{V}_{\text{total}}^{-1} \, \tilde{\mathbf{r}},
 \end{equation}
 which involves only a standard inversion of the $r \times r$ matrix $\tilde{V}_{\text{total}}$. Under the null hypothesis, $\chi^2_{\text{proj}}$ follows a $\chi^2$ distribution with $r = N_{\text{bins}} - N_{\text{null}}$ degrees of freedom.
+
+An identical construction can be carried out entirely in reconstructed space. Defining the reconstructed-space residual as $\boldsymbol{\delta} = \mathbf{d} - \Delta \, \boldsymbol{\varphi}_{\text{pred}}$, the corresponding projected $\chi^2$ is given by:
+\begin{equation}\label{eq:chi2_reco}
+    \begin{split}
+        \chi^2_{\text{reco}} &= \boldsymbol{\delta}^{\mathsf{T}} \, ( P_{\text{reco}} \, C_{\text{total}} \, P_{\text{reco}} )^{+}  \, \boldsymbol{\delta}\\
+        &= \boldsymbol{\delta}^{\mathsf{T}} \, V_r \, ( V_r^{\mathsf{T}} \, C_{\text{total}} \, V_r )^{-1} \, V_r^{\mathsf{T}} \, \boldsymbol{\delta}\\
+        &= \tilde{\boldsymbol{\delta}}^{\mathsf{T}} \, \tilde{C}_{\text{total}}^{-1} \, \tilde{\boldsymbol{\delta}},
+    \end{split}
+\end{equation}
+where the reduced form follows directly from the orthonormality of $V_{r}$. Without projectors, the two quadratic forms are equivalent, as the unfolding matrix cancels in the unfolded space calculation. This is a well-known result when using the additional smearing matrix to compare model predictions to unfolded data. However, using projectors breaks this equivalence. In this case, the test statistic in unfolded space contains factors of $U^{\mathsf{T}}U$, as can be seen by expressing it in terms of reconstructed-space quantities:
+\begin{equation}\label{eq:chi2_unfd_expanded}
+    \chi^2_{\text{proj}} = \boldsymbol{\delta}^{\mathsf{T}} \, U^{\mathsf{T}} U \, V_r \, ( V_r^{\mathsf{T}} \, U^{\mathsf{T}} U \, C_{\text{total}} \, U^{\mathsf{T}} U \, V_r )^{-1} \, V_r^{\mathsf{T}} \, U^{\mathsf{T}} U \, \boldsymbol{\delta},
+\end{equation}
+which reduces to Eq. \eqref{eq:chi2_reco} only when $U^{\mathsf{T}} U = I$, i.e. when the unfolding matrix is orthogonal. Since unfolding matrices are generically not orthogonal, the two test statistics yield different numerical values for the same data and prediction. The unfolded-space formulation is the appropriate one for testing published cross-section results, as it accounts for effects introduced by the unfolding in the definition of the non-null subspace.
 
 \subsection{Proof sketch / justification}
 
