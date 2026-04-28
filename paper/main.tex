@@ -53,6 +53,7 @@ Consider a neutrino cross-section analysis simultaneously measuring $B$ differen
 This method provides a systematic framework for reporting the correlations between the different extracted differential cross sections. It provides a general prescription to construct statistical covariance matrices that respect the correlations between bins in different distributions or blocks. The full inter-block covariance matrix constructed in reconstructed space is propagated through unfolding using a block-diagonal unfolding matrix, obtained as a direct sum of the individual unfolding matrices computed for each block. The result of the combined measurement is a vector of $N_{\text{bins}} = \sum_{b=1}^{B} N_b$ cross-section values with an $N_{\text{bins}} \times N_{\text{bins}}$ covariance matrix. The total covariance decomposes as $C_{\text{total}} = C_{\text{stat}} + C_{\text{syst}}$, where the statistical covariance component, computed from the shared-event structure, encodes the constraints described in the introduction.
 
 \subsection{Statistical covariance from shared events}
+\label{subsec:statistical_cov}
 
 The core idea behind the treatment of the statistical correlations in the blockwise unfolding approach is the partition of any arbitrary pair of overlapping kinematic bins $X$ and $Y$ into a set of three non-overlaping bins $u$, $v$, and $w$. The events in the intersection $X \cap Y$ are assigned to bin $v$, while bin $u$ contains the events in the relative complement of $Y$ in $X$ (i.e. $X \setminus Y$), and bin $w$ corresponds to the relative complement of $X$ in $Y$ (i.e. $Y \setminus X$). Denoting the number of predicted events in each bin as $n_{i}$, and assuming these follow independent Poisson distributions, the covariance between the counts in bins $X$ and $Y$ is given by \cite{Gardiner:2024gdy}:
 \begin{equation}
@@ -73,6 +74,7 @@ where $w_{e}$ is the weight associated to event $e$ belonging to the intersectio
 After propagation through the block-diagonal unfolding, the statistical covariance matrix in unfolded space inherits the same rank structure, as the unfolding matrices for each individual block are invertible. This rank structure has a direct interpretation in terms of the number of distinct event-sharing patterns across distributions, which we discuss next.
 
 \subsection{Combination matrix and null space}
+\label{subsec:combination_matrix}
 
 The previous discussion shows that the statistical covariance between any two bins is determined solely by the events they share. We now formalize this observation to derive an exact formula for the rank of $C_{\text{stat}}$, and therefore for the number of directions in bin space that carry zero statistical variance.
 
@@ -101,6 +103,7 @@ A vector $\mathbf{x}$ is in the null space of $C_{\text{stat}}$ if and only if, 
 or equivalently $\Omega \mathbf{x} = 0$. Each unique indicator vector acts as a linear constraint on the null-space vectors, requiring that the components of $\mathbf{x}$ sum to zero over the bins populated by the different events. The null space directions can be divided into two physically distinct categories: structural constraints that follow from the block topology alone, and kinematic constraints that depend on which regions of phase space are populated.
 
 \subsection{Determination of the structural null space}
+\label{subsec:null_space}
 
 The combination matrix $\Omega$ presented previously is constructed from MC events. One determines which events populate the different bins and collects the unique indicator vectors. However, the indicator vectors that can appear are constrained by two distinct mechanisms. The first is purely structural, the geometry of the binning scheme forbids certain bin combinations. The second is kinematic, correlations between the different variables render some combinations unreachable even though they are geometrically allowed. These constraints are imposed by the underlying physics effects, mainly the differential cross section and the detector acceptance. In the following, we show that the structural constraints can be determined a priori, without generating MC events, from the bin edges used.
 
@@ -110,11 +113,7 @@ The variables used in a measurement are drawn from a set $\{v_{1}, \ldots v_{D}\
 \end{equation}
 with $M_{v} = |\mathcal{E}_{v}| - 1$ denoting the number of refined bins for variable $v$. Since $\mathcal{E}_{v}$ contains all the bin edges from every block that uses that variable, each refined bin is contained entirely within one original bin of every such block.
 
-The common refinement of all blocks is the Cartesian product of the refined bins across all variables:
-\begin{equation}
-    \mathcal{R} = \bigtimes_{v} \{1,\ldots,M_v\}.
-\end{equation}
-Each cell $c \in \mathcal{R}$ specifies a refined bin index for every variable in the measurement. For every block $b$, there exists a unique mapping $\beta_{b}(c)$ between each cell $c$ and an original bin in said block. The elements of the indicator vector $\bm{\phi}_{c} \coloneqq (\phi_{c,i})_{i=1}^{N_{\text{bins}}}$ associated to cell $c$ can be written as:
+The common refinement of all blocks is the Cartesian product of the refined bins across all variables, denoted by $\mathcal{R}$. Each cell $c \in \mathcal{R}$ specifies a refined bin index for every variable in the measurement. For every block $b$, there exists a unique mapping $\beta_{b}(c)$ between each cell $c$ and an original bin in said block. The elements of the indicator vector $\bm{\phi}_{c} \coloneqq (\phi_{c,i})_{i=1}^{N_{\text{bins}}}$ associated to cell $c$ can be written as:
 \begin{equation}
     \phi_{c,i} = \begin{cases}
         1 & \text{if } i = \beta_b(c) \text{ for any block } b, \\
@@ -147,6 +146,7 @@ The number of null directions $N_\text{null}$ depends on the overlap structure b
 \end{comment}
 
 \subsection{Effect of systematic uncertainties}
+\label{subsec:systematics}
 
 Previously, we established that the event-sharing structure imposes $N_{\text{null}} = N_{\text{bins}} - \mathrm{rank}(\Omega)$ exact linear constraints on the bin counts, which manifest as a rank deficiency of $C_{\text{stat}}$. Whether the total covariance matrix inherits the rank deficiency depends on which of these null directions receive support from the systematic uncertainties. Now, we examine the mechanisms by which different systematic treatments do or do not populate the null space of $C_{\text{stat}}$.
 
@@ -254,6 +254,47 @@ Under the null hypothesis, the residual $\mathbf{r}$ is drawn from a multivariat
 The validity of the range-projected $\chi^{2}$ can also be understood from the general theory of quadratic forms of correlated normal variables. Theorem 9.2.2 of Ref. \cite{Rao:1971} establishes that if $\mathbf{Y} \sim \mathcal{N}(0, \Sigma)$ with $\mathrm{rank}(\Sigma) = k$, then $\mathbf{Y}^{\mathsf{T}} \Sigma^{+} \mathbf{Y} \sim \chi^2(k)$ for any choice of generalized inverse $\Sigma^{+}$. Assuming the null hypothesis, the projected residual $P_{\text{true}} \mathbf{r}$ is normally distributed with covariance $P_{\text{true}} V_{\text{total}} P_{\text{true}}$, which has rank $r$ by construction. The formulation of Eq. \eqref{eq:chi2_proj_unfd} with the Moore--Penrose pseudoinverse is  a specific instance of this general result. The key distinction from purely numerical approaches to handling singular covariance matrices is that the rank is not determined by an eigenvalue threshold applied to the covariance, but is predicted exactly via the combination matrix $\Omega$ from the structure of the measurement.
 
 \subsection{Relation to alternative approaches}
+
+\section{Toy example}
+\label{sec:toy}
+
+The formalism developed previously is now illustrated with a toy model that captures the essential features of a multi-distribution neutrino cross-section measurement: a two-dimensional underlying physics process, a simple detector model, and a multi-block binning scheme in which events are shared across distributions. The toy is design to be minimal but non-trivial. A three-block structure produces a rank-deficient statistical covariance matrix, and a Feldman--Cousins study demonstrates the consequences of ignoring or correctly treating the resulting null directions.
+
+\subsection{Model and measurement setup}
+
+The toy model mimics a muon neutrino charged-current quasi-elastic--like interaction, producing a muon characterized by its momentum $p_\mu$ and scattering angle $\theta_{\mu}$. The joint truth-level differential cross section is parametrized as:
+\begin{equation}
+    f(p_\mu, \cos\theta_\mu) = p_\mu^{\,k} \, e^{-k\,p_\mu / p_0} \, e^{\,\kappa \cos\theta_\mu} \, (1 + \alpha \, p_\mu \cos\theta_\mu),
+\end{equation}
+where the four parameters $(k, p_{0}, \kappa, \alpha)$ control the shape of the momentum spectrum, the level of forward peaking, and the strength of the momentum--angle correlation, respectively. A central-value (CV) model with $(k, p_0, \kappa, \alpha) = (3.0, 0.2, 2.0, 0.3)$ is used to build
+the response matrix and estimate the covariance, while a ``fake'' model with $(k, p_0, \kappa, \alpha) = (3.3, 0.2, 1.8, 0.35)$ serves as the true underlying distribution from which pseudo-data are drawn. Truth events are generated via rejection sampling over $p_\mu \in [0.0, 1.2] ~ \mathrm{GeV}/c$ and $\cos\theta_{\mu} \in [-1.0, 1.0]$.
+
+A simple detector model introduces two different effects. Momentum is smeared
+multiplicatively, $p_\text{reco} = p_\text{true}(1 + \delta_p)$ with $\delta_p \sim \mathcal{N}(0, \sigma_p)$ and $\sigma_p = 0.05$, while the angle is smeared additively, $\theta_\text{reco} = \theta_\text{true} + \delta_\theta$ with $\delta_\theta \sim \mathcal{N}(0, \sigma_\theta)$ and
+$\sigma_\theta = 1^\circ$.  A sigmoid efficiency function $\varepsilon(p_\text{reco}) = [1 + e^{-(p_\text{reco} - p_\text{thr})/w}]^{-1}$ with threshold $p_\text{thr} = 0.10 ~ \mathrm{GeV}/c$ and width $w = 0.02  ~ \mathrm{GeV}/c$ models the turn-on of event selection at low momentum.
+
+The analysis uses three bin blocks in reconstructed space: a $p_{\mu}$ marginal (5 bins), a $\cos\theta_{\mu}$ marginal (5 bins), and a two-dimensional distribution sliced in $\cos\theta_{\mu}$ (3 slices, each with 4 bins in $p_{\mu}$), for a total of $N_{\text{bins}} = 22$. The bin edges of the 2D block do not align exactly with those of the 1D marginals, which is the usual situation in real analyses. A CV sample of $N_{\text{MC}} = 500{,}000$ truth events is generated, processed through the detector model, and used to construct the response matrix $\Delta$. Pseudo-data samples are generated by drawing $N_{\text{data}} = 5{,}000$ events from the fake model.
+
+\begin{figure}[!t]
+	\centering
+	\includegraphics[width=1.00\linewidth]{images/toy_event_dist.pdf}
+	\caption{Predicted event distributions in the toy analysis blocks for the CV model (filled histograms) and the fake model (solid lines), together with a pseudo-data realization (points with statistical error bars). The shaded bands indicate the systematic uncertainty on the CV prediction. The top row shows the $p_\mu$ and $\cos\theta_\mu$ marginals; the bottom row shows the three $\cos\theta_\mu$ slices of the 2D block, each binned in $p_\mu$.}
+	\label{fig:toy_distributions}
+\end{figure}
+
+Systematic uncertainties are estimated following the response-matrix approach described in Sec. \ref{subsec:systematics}. Interaction-model variations are obtained by reweighting the CV sample to six alternative model configurations, each producing a varied response matrix $\Delta_{s}$. The shift vector $\boldsymbol{\delta}_{s} = (\Delta_{s} - \Delta) \, \boldsymbol{\varphi}$ captures the effect on the predicted reconstructed-space distribution. Detector variations are obtained by generating eight independent samples with perturbed detector parameters ($\sigma_p$, $\sigma_\theta$,
+$p_\text{thr}$, and $w$), each producing a new response matrix from which a shift vector is computed similarly. The total systematic covariance matrix is $C_\text{syst} = N_\text{var}^{-1} \sum_i \delta_i \, \delta_i^T$, scaled to data statistics. The statistical covariance is computed following the prescription from Eq. \eqref{eq:cstat_elements}, assuming unit event weights, which captures the inter-block correlations from event sharing.
+
+Figure \ref{fig:toy_distributions} shows the predicted event distributions for the CV and fake models in all three blocks of the toy analysis, together with a pseudo-data sample distribution and the systematic uncertainty bands.
+
+\subsection{Null-space structure}
+
+\begin{figure}[!t]
+	\centering
+	\includegraphics[width=0.80\linewidth]{images/toy_covariance_spectra.pdf}
+	\caption{Expected number of signal events for reconstructed bins in block 11, used for the double-differential $(N_{p}, ~\mathrm{cos}~\theta_{\mu l_{4}})$ measurement. Both the central-value MicroBooNE tune prediction (black line) and the NuWro alternative prediction (blue line) are shown. Error bars include only the MC statistical uncertainty.}
+	\label{fig:toy_covariance}
+\end{figure}
 
 \begin{comment}
 \section{Analytical demonstration}
