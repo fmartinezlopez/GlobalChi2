@@ -302,41 +302,33 @@ The eigenvalue spectrum of $C_{\text{stat}}$ confirms this. It shows $5$ eigenva
 
 \subsection{Goodness-of-fit validation}
 
+The calibration of the projected and unprojected $\chi^{2}$ test statistics is assessed with a toy Monte Carlo exercise at the true hypothesis point. A high-statistics simulation of the fake model is used to estimate the event distribution on a fine reconstructed-space grid, defined by the union of all bin edges in $p_{\mu}$ and $\cos\theta_{\mu}$ across the three blocks, corresponding to the common refinement described in Sec. \ref{subsec:null_space}. Each toy experiment draws a Poisson-fluctuated total event count and distributes them across the fine grid via multinomial sampling. These events are then projected onto the three analysis blocks, preserving the inter-block correlations from event sharing. Systematic fluctuations are added as correlated Gaussian throws from the Cholesky decomposition of $C_{\text{syst}}$. The $\chi^{2}$ is evaluated in reconstructed space, comparing each toy to the forward-folded prediction at the true hypothesis, for both the unprojected statistic, using the direct inverse of $C_{\text{total}}$, and the range-projected statistic of Eq. \eqref{eq:chi2_reco}.
+
+Figure \ref{fig:toy_chi2_dist} shows the results from $10^6$ toy experiments. The projected $\chi^{2}$ statistic closely follows the expected $\chi^{2}(17)$ distribution, with a mean of $17.23$ and a standard deviation of $6.01$, in good agreement with the expected values of $17$ and $\sqrt{2 \times 17} \approx 5.83$. In contrast, the unprojected statistic  is shifted to significantly higher values with a mean of $30.59$, and a standard deviation of $8.96$, far above the expectation for a $\chi^{2}(22)$ distribution of $22$ and $\sqrt{2 \times 22} \approx 6.63$. The right panel shows the corresponding p-value distributions. The projected statistic yields an approximately uniform distribution, with a false rejection rate of $5.7\%$ at the $5\%$ significance level. The unprojected statistic produces a false rejection rate of $32.4\%$, more than six times the expected value. An analyzer using the unprojected statistic for goodness-of-fit testing would falsely reject the correct model roughly one third of the time.
+
 \begin{figure}[!t]
 	\centering
 	\includegraphics[width=1.00\linewidth]{images/toy_1d_chi2_dist.pdf}
-	\caption{Eigenvalue spectra of the statistical covariance matrix $C_\text{stat}$ (blue circles) and the total covariance matrix $C_\text{total} = C_\text{stat} + C_\text{syst}$ (orange squares), for the toy analysis, sorted in descending order.}
+	\caption{Goodness-of-fit validation for toy experiments generated at the true hypothesis. Left: distributions of the unprojected (red) and range-projected (blue) $\chi^2$ statistics, compared with the expected $\chi^2(22)$ and $\chi^2(17)$ distributions (dashed curves). Right: corresponding p-value distributions, with the false rejection rates at the $5\%$ significance level indicated.}
 	\label{fig:toy_chi2_dist}
 \end{figure}
 
-\begin{comment}
-\section{Analytical demonstration}
+\subsection{Parameter estimation}
 
-\begin{figure}[!h]
+The impact of using the projected test statistic on parameter estimation is assessed with a two-dimensional Feldman--Cousins study. A grid of hypotheses is constructed over $(\kappa, \alpha)$ with $k=3.3$ held constant. At each grid point, the truth-level prediction is forward-folded through the nominal response matrix and compared to the toy pseudo-data. The test statistic $\Delta\chi^2 = \chi^2(\kappa, \alpha) - \chi^2_\text{min}$ is computed for both the unprojected and projected cases, and confidence regions are constructed from the resulting $\Delta\chi^2$ surfaces.
+
+Figure \ref{fig:toy_2d_scan} shows the 68\% and 95\% confidence level contours from the Asimov dataset for both test statistics. The projected contours are correctly centered on the true parameter values, while the unprojected contours are shifted, with the 68\% region excluding the true point. The unprojected best fit values are biased, particularly in $\alpha$. The mean best-fit value across toys is $\hat{\alpha} = 0.22$, far from the true value of $0.35$, while the projected statistic recovers $\hat{\alpha} = 0.37$. The bias in $\kappa$ is milder ($\hat{\kappa} = 1.84$ for unprojected, $\hat{\kappa} = 1.80$ for projected, compared to the true $1.80$). This indicates that $\alpha$ has greater overlap with the null directions.
+
+The frequentist coverage confirms these observations. At the 68.3\% confidence level, the projected statistic achieves nominal coverage in both the joint two-dimensional region ($68.2\%$) and the one-dimensional profiled intervals ($68.1\%$ for $\kappa$, $67.9\%$ for $\alpha$). The unprojected statistic suffers severe undercoverage: $36.5\%$ in the joint region, $44.6\%$ for $\kappa$, and $34.1\%$ for $\alpha$. The undercoverage is worst for $\alpha$, consistent with its stronger sensitivity to the null-space contamination. The projected contours are larger than the unprojected ones, reflecting the genuine sensitivity of the measurement once the ill-constrained directions are properly removed.
+
+\begin{figure}[!t]
 	\centering
-	\includegraphics[width=1.00\linewidth]{images/analytical_corner_example.pdf}
-	\caption{Expected number of signal events for reconstructed bins in block 11, used for the double-differential $(N_{p}, ~\mathrm{cos}~\theta_{\mu l_{4}})$ measurement. Both the central-value MicroBooNE tune prediction (black line) and the NuWro alternative prediction (blue line) are shown. Error bars include only the MC statistical uncertainty.}
-	\label{fig:analytical_corner_example}
+	\includegraphics[width=0.70\linewidth]{images/toy_2d_scan_cl.pdf}
+	\caption{Confidence regions in the $(\kappa, \alpha)$ plane from the Asimov dataset, showing the 68\% and 95\% CL contours for the range-projected (blue) and unprojected (red) test statistics. The star marks the true parameter values; the squares indicate the mean best-fit points across $10^6$ toys.}
+	\label{fig:toy_2d_scan}
 \end{figure}
 
-\subsection{Setup}
-
-\subsection{Eigenvalue analysis}
-
-\subsection{Pseudo-experiment validation}
-
-\subsection{Sensitivity to threshold choice}
-
-\section{Realistic demonstration with neutrino generators }
-
-\subsection{Simulation setup}
-
-\subsection{Example 1: Two blocks ($N_{\text{null}} = 1$)}
-
-\subsection{Example 2: Four blocks with multiplicity slicing ($N_{\text{null}} = 2$)}
-
-\subsection{Practical observations}
-
+\begin{comment}
 \section{Practical implementation guide}
 
 \subsection{Step-by-step recipe}
@@ -344,8 +336,6 @@ The eigenvalue spectrum of $C_{\text{stat}}$ confirms this. It shows $5$ eigenva
 \subsection{What to include in data releases}
 
 \subsection{Compatibility notes}
-
-\section{Connection to the statistics literature}
 
 \section{Summary and recommendations}
 \end{comment}
