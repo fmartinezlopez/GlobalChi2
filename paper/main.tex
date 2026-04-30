@@ -133,7 +133,7 @@ This hierarchy motivates a decomposition of the total number of degenerate direc
         &= N_{\text{null}}^{\text{struct}} + N_{\text{null}}^{\text{kinem}}.
     \end{split}    
 \end{equation}
-The first term, $N_{\text{null}}^{\text{struct}}$, counts null directions that arise purely from the binning geometry and is computable a priori from the bin edges alone. The second term, $N_{\text{null}}^{\text{kinem}}$, accounts for additional null directions introduced by phase-space restrictions that exclude geometrically allowed combinations and can only be determined from Monte Carlo. A description of the algorithm used to compute $\Omega_{\text{struct}}$, including an optimization that restricts the enumeration to shared variables, is presented in Appendix \ref{app:algorithm}.
+The first term, $N_{\text{null}}^{\text{struct}}$, counts null directions that arise purely from the binning geometry and is computable a priori from the bin edges alone. The second term, $N_{\text{null}}^{\text{kinem}}$, accounts for additional null directions introduced by phase-space restrictions that exclude geometrically allowed combinations and can only be determined from Monte Carlo. A description of the algorithm used to compute $\Omega_{\text{struct}}$ is presented in Appendix \ref{app:algorithm}.
 
 The presence of kinematic null directions indicate that certain regions of the combined bin space are empty, which may signal that the binning extends beyond the kinematic reach of the measurement or that it is finer than the available statistics can support. In such cases, merging or removing the offending bins may be preferable to relying on a projection to handle the resulting constraints. The structural null directions, by contrast are an unavoidable consequence of measuring multiple distributions from shared events and cannot be eliminated by rebinning.
 
@@ -343,10 +343,26 @@ The frequentist coverage confirms these observations. At the 68.3\% confidence l
 \acknowledgments
 
 \appendix
-\section{Algorithm}
+\section{Structural combination matrix algorithm}
 \label{app:algorithm}
 
-The naive counting of the common refinement $\mathcal{R}$ has cost $\prod_{v} M_{v}$, which grows exponentially with the number of kinematic variables. A typical multi-distribution measurement involves $\mathcal{O}(5)$ variables each with $\mathcal{O}(10)$ refined bins, giving $\mathcal{O}(10^{5})$ cells. The key insight is that only shared variables (i.e. the ones appearing in two or more blocks) generate the cross-block constraints. Dividing the variable set into shared ($V_{s}$) and private ($V_{p}$) variables, one has to enumerate only the reduced refinement $\prod_{v \in V_{s}} M_{v}$. For each of the shared-variable cells, the bins from blocks that depend on the shared variable are determined by lookup, while blocks whose binning variable is private contribute their bins independently via a local Cartesian product. If the number of shared variables is small the computational cost is dramatically reduced.
+We describe the algorithm implemented to construct the structural combination matrix $\Omega_{\text{struct}}$ from the bin edge specifications of the multi-block measurement. Each row of $\Omega_{\text{struct}}$ is a unique indicator vector encoding one structurally allowed combination of bins, one per block, that a single event can simultaneously populate. The rank of this matrix determines the number of null directions, as described in Sec. \ref{subsec:null_space}.
+
+The construction proceeds in three stages. First, the kinematic variables used across all blocks are classified as shared (appearing in two or more blocks) or private (appearing in exactly one block). This distinction is key to the efficiency of the algorithm. Shared variables create correlations between blocks, while private variables contribute bins that are independent of all other blocks.
+
+Second, a common refinement is computed for each shared variable by taking the union of all bin edges from every block that uses it. The algorithm then enumerates the cells of this shared-variable refinement. For each cell, the midpoint in each shared variable is used to identify which bin (or set of bins) in each block is compatible with that cell. When the binning of a given block is fully determined by the shared variables (e.g., a 1D block whose variable is shared, or a 2D block whose slice and bin variables are both shared) the cell maps to a single bin. When a block uses a private variable, the shared cell constrains only part of the binning, and the block contributes multiple candidate bins corresponding to the different private-variable choices. A 1D block whose variable is private contributes all of its bins; a 2D block with a shared slice variable and a private bin variable contributes all bins within the determined slice.
+
+Third, the candidate bins from each block are combined. In the simplest case, the full Cartesian product of all candidate bins is expanded, and each element becomes a row of $\Omega_\text{struct}$. However, when many blocks have private variables, this product can become very large. In that case, a representative subset of indicator vectors is used instead. A base combination is formed by selecting the first candidate bin from each block, and then the remaining candidates from each block are substituted one at a time while the others are held at their base values. This produces at most $1 + \sum_{b} (n_{b} - 1)$ rows per shared cell, where $n_{b}$ is the number of candidate bins for block $b$. The representative set spans the same column space as the full Cartesian product, and therefore yields the same $\mathrm{rank}(\Omega_\text{struct})$ and null-space structure.
+
+To understand why, note that any indicator vector from the full product can be written as the sum of indicator vectors from the representative set. Denoting the base combination as $\mathbf{e}_{0}$ and the single-block variations as $\mathbf{e}_j^{(k)}$ (block $k$ switched to its $j$-th candidate), any full-product row that selects candidate $j_k$ in each block satisfies:
+\begin{equation}
+    \mathbf{e}_{j_1, \ldots, j_B} = \mathbf{e}_{0} + \sum_k (\mathbf{e}_{j_{k}}^{(k)} - \mathbf{e}_{0}),
+\end{equation}
+since the blocks occupy disjoint columns. The full product therefore lies in the span of the representative rows, and the rank is preserved.
+
+When the measurement involves mutually exclusive event selections, blocks belonging to different selections share no events and are processed independently. The algorithm is applied separately to each selection group, and the resulting matrices are vertically concatenated.
+
+The cost of the algorithm is dominated by the enumeration of shared-variable cells, which scales as $\prod_{v \in \text{shared}} M_v$ where $M_v$ is the number of refined bins for shared variable $v$. Since only shared variables enter this product, measurements with many blocks but few shared variables, such as a set of 1D distributions in different kinematic variables, are handled efficiently regardless of the total number of bins.
 
 % Bibliography
 
