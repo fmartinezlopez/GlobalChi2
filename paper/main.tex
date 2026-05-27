@@ -202,7 +202,7 @@ where $S = \mathrm{diag}(s_{1}, \ldots, s_{N_{\text{bins}}})$ contains the eigen
 \end{equation}
 Note that $P_{\text{reco}}$ is identical to the projector onto the range of $C_{\text{stat}}$ as defined in Eq. \eqref{eq:cstat_outer}, since $C_{\text{stat}}$ and $\Omega^{\mathsf{T}} \Omega$ share the same column space by construction. The combination matrix formulation makes explicit the fact that the projector is determined by the measurement geometry.
 
-Cross-section measurements are typically reported in unfolded space, and it is in that space where goodness-of-fit tests are evaluated. The blockwise unfolding matrix $U$, which is block-diagonal and invertible, maps reconstructed-space vectors onto unfolded space. The non-null basis vectors propagate as $W_{r} = U \, V_{r}$. Since $U$ is not orthogonal in general, the columns of $W_{r}$ are not orthonormal, and the projector onto their span takes the general form:
+Cross-section measurements are reported in unfolded space, and it is in that space where goodness-of-fit tests are typically evaluated. The blockwise unfolding matrix $U$, which is block-diagonal and invertible, maps reconstructed-space vectors onto unfolded space. The non-null basis vectors propagate as $W_{r} = U \, V_{r}$. Since $U$ is not orthogonal in general, the columns of $W_{r}$ are not orthonormal, and the projector onto their span takes the general form:
 \begin{equation}\label{eq:proj_true}
     P_{\text{true}} = W_{r} \, (W_{r}^{\mathsf{T}} \, W_{r})^{-1} \, W_{r}^{\mathsf{T}}.
 \end{equation}
@@ -212,46 +212,50 @@ In practice, the eigenvalues of $\Omega^{\mathsf{T}} \Omega$ that are technicall
 
 \subsection{Test statistic definition}
 
-The goodness-of-fit test is evaluated in unfolded space, where the residual vector is defined as:
-\begin{equation}
-    \mathbf{r} = \hat{\bm{\varphi}} - A_{C} \, \bm{\varphi}_{\text{pred}},
+The goodness-of-fit test is evaluated in reconstructed space, where the residual vector is given by $\boldsymbol{\delta} = \mathbf{d} - \Delta \, \boldsymbol{\varphi}_{\text{pred}}$, where $\mathbf{d}$ is the background-subtracted data, $\Delta$ is the detector response matrix, and $\boldsymbol{\varphi}_{\text{pred}}$ is a truth-level model prediction. The range-projected $\chi{^2}$ is defined as:
+\begin{equation}\label{eq:chi2_proj_reco}
+    \chi^2_{\text{proj}} = \boldsymbol{\delta}^{\mathsf{T}} \, ( P_{\text{reco}} \, C_{\text{total}} \, P_{\text{reco}} )^{+} \, \boldsymbol{\delta},
 \end{equation}
-where $\hat{\bm{\varphi}} = U \mathbf{d}$ is the unfolded background-subtracted data, $A_{C} = U \, \Delta$ is the additional smearing matrix \cite{Tang:2017rob}, and $\bm{\varphi}_{\text{pred}}$ is a truth-level model prediction. The range-projected $\chi{^2}$ in unfolded space is:
-\begin{equation}\label{eq:chi2_proj_unfd}
-    \chi^2_{\text{proj}} = \mathbf{r}^{\mathsf{T}} \, ( P_{\text{true}} \, V_{\text{total}} \, P_{\text{true}} )^{+} \, \mathbf{r},
-\end{equation}
-where $V_{\text{total}} = U \, C_{\text{total}} \, U^{\mathsf{T}}$ is the total covariance matrix in unfolded space and $^+$ denotes the Moore--Penrose pseudoinverse.
+with the superscript $^+$ denoting the Moore--Penrose pseudoinverse.
 
-The pseudoinverse can be avoided entirely by reducing the problem to $r$ dimensions. One can verify that the pseudoinverse of $P_{\text{true}} \, V_{\text{total}} \, P_{\text{true}}$ takes the
+The pseudoinverse can be avoided entirely by reducing the problem to $r$ dimensions. One can verify that the pseudoinverse of $P_{\text{reco}} \, C_{\text{total}} \, P_{\text{reco}}$ takes the
 closed form:
-\begin{equation}\label{eq:pinv_true}
-    ( P_{\text{true}} \, V_{\text{total}} \, P_{\text{true}} )^{+} = W_r \, ( W_r^{\mathsf{T}} \, V_{\text{total}} \, W_r )^{-1} \, W_r^{\mathsf{T}}.
+\begin{equation}\label{eq:pinv_reco}
+    ( P_{\text{reco}} \, C_{\text{total}} \, P_{\text{reco}} )^{+} = V_r \, (V_r^{\mathsf{T}} \, C_{\text{total}} \, V_r)^{-1} \, V_r^{\mathsf{T}}.
 \end{equation}
-Substituting into Eq. \eqref{eq:chi2_proj_unfd} and defining the reduced residual $\tilde{\mathbf{r}} = W_r^{\mathsf{T}} \, \mathbf{r}$ and the reduced covariance matrix $\tilde{V}_{\text{total}} = W_r^{\mathsf{T}} \, V_{\text{total}} \, W_r$, the test statistic becomes:
+Substituting into Eq. \eqref{eq:chi2_proj_reco} and defining the reduced residual $\tilde{\boldsymbol{\delta}} = V_r^{\mathsf{T}} \, \boldsymbol{\delta}$ and the reduced covariance matrix $\tilde{C}_{\text{total}} = V_r^{\mathsf{T}} \, C_{\text{total}} \, V_r$, the test statistic becomes:
 \begin{equation}\label{eq:chi2_reduced}
-    \chi^2_{\text{proj}} = \tilde{\mathbf{r}}^{\mathsf{T}} \, \tilde{V}_{\text{total}}^{-1} \, \tilde{\mathbf{r}},
+    \chi^2_{\text{proj}} = \tilde{\boldsymbol{\delta}}^{\mathsf{T}} \, \tilde{C}_{\text{total}}^{-1} \, \tilde{\boldsymbol{\delta}},
 \end{equation}
-which involves only a standard inversion of the $r \times r$ matrix $\tilde{V}_{\text{total}}$. Under the null hypothesis, $\chi^2_{\text{proj}}$ follows a $\chi^2$ distribution with $r = N_{\text{bins}} - N_{\text{null}}$ degrees of freedom.
+which involves only a standard inversion of the $r \times r$ matrix $\tilde{C}_{\text{total}}$. Under the null hypothesis, $\chi^2_{\text{proj}}$ follows a $\chi^2$ distribution with $r = N_{\text{bins}} - N_{\text{null}}$ degrees of freedom.
 
-An identical construction can be carried out entirely in reconstructed space. Defining the reconstructed-space residual as $\boldsymbol{\delta} = \mathbf{d} - \Delta \, \boldsymbol{\varphi}_{\text{pred}}$, the corresponding projected $\chi^2$ is given by:
-\begin{equation}\label{eq:chi2_reco}
+Without the projection, the $\chi^2$ test statistic takes the same numerical value whether computed in reconstructed or unfolded space, as the factors of the unfolding matrix cancel identically when applying the additional smearing matrix to the predictions \cite{Tang:2017rob}. The introduction of the projector breaks this equivalence when the projection is performed after unfolding. In unfolded-space the residual is defined as $\mathbf{r} = \hat{\boldsymbol{\varphi}} - A_C \, \boldsymbol{\varphi}_{\text{pred}}$, where $\hat{\bm{\varphi}} = U \mathbf{d}$ is the unfolded background-subtracted data and $A_{C} = U \, \Delta$ is the additional smearing matrix. Using the propagated basis $W_r = U \, V_r$, one can construct an analogous test statistic in unfolded space as:
+\begin{equation}\label{eq:chi2_proj_unfd}
+    \chi^2_{\text{unf}} = \tilde{\mathbf{r}}^{\,\mathsf{T}} \, \tilde{V}_{\text{total}}^{-1} \, \tilde{\mathbf{r}},
+\end{equation}
+where $V_{\text{total}} = U \, C_{\text{total}} \, U^{\mathsf{T}}$ is the total covariance matrix in unfolded space, and $\tilde{\mathbf{r}} = W_r^{\mathsf{T}} \, \mathbf{r}$ and $\tilde{V}_{\text{total}} = W_r^{\mathsf{T}} \, V_{\text{total}} \, W_r$ are the . While this is a valid test statistic on its own, it is not numerically equal to Eq. \eqref{eq:chi2_reduced}. Expressing it in terms of reconstructed-space quantities yields:
+\begin{equation}\label{eq:chi2_unfd_expanded}
+    \chi^2_{\text{unf}} = \boldsymbol{\delta}^{\mathsf{T}} \, U^{\mathsf{T}} U \, V_r \, ( V_r^{\mathsf{T}} \, U^{\mathsf{T}} U \, C_{\text{total}} \, U^{\mathsf{T}} U \, V_r )^{-1} \, V_r^{\mathsf{T}} \, U^{\mathsf{T}} U \, \boldsymbol{\delta},
+\end{equation}
+which reduces to Eq. \eqref{eq:chi2_reduced} only when $U^{\mathsf{T}} U = I$, i.e. when the unfolding matrix is orthogonal.
+
+The $\chi^{2}$ equivalence is restored if the projection is applied before unfolding. Projecting the reconstructed-space residual and covariance first, then propagating through the unfolding matrix, gives:
+\begin{equation}\label{eq:chi2_proj_then_unf}
     \begin{split}
-        \chi^2_{\text{reco}} &= \boldsymbol{\delta}^{\mathsf{T}} \, ( P_{\text{reco}} \, C_{\text{total}} \, P_{\text{reco}} )^{+}  \, \boldsymbol{\delta}\\
-        &= \boldsymbol{\delta}^{\mathsf{T}} \, V_r \, ( V_r^{\mathsf{T}} \, C_{\text{total}} \, V_r )^{-1} \, V_r^{\mathsf{T}} \, \boldsymbol{\delta}\\
-        &= \tilde{\boldsymbol{\delta}}^{\mathsf{T}} \, \tilde{C}_{\text{total}}^{-1} \, \tilde{\boldsymbol{\delta}},
+        (U \, P_{\text{reco}} \, \boldsymbol{\delta})^{\mathsf{T}} \, (U \, P_{\text{reco}} \, C_{\text{total}} \, P_{\text{reco}} \, U^{\mathsf{T}})^{+} \, (U \, P_{\text{reco}} \, \boldsymbol{\delta}) &= \tilde{\boldsymbol{\delta}}^{\mathsf{T}} \, W_{r}^{\mathsf{T}} \, (W_{r} \, \tilde{C}_{\text{total}} \, W_{r}^{\mathsf{T}})^{+} \, W_{r} \, \tilde{\boldsymbol{\delta}}\\
+        &= \tilde{\boldsymbol{\delta}}^{\mathsf{T}} \, G \, (G \, \tilde{C}_{\text{total}} \, G)^{-1} \, G \, \tilde{\boldsymbol{\delta}}\\
+        &= \chi^2_{\text{proj}},
     \end{split}
 \end{equation}
-where the reduced form follows directly from the orthonormality of $V_{r}$. Without projectors, the two quadratic forms are equivalent, as the unfolding matrix cancels in the unfolded space calculation. This is a well-known result when using the additional smearing matrix to compare model predictions to unfolded data. However, using projectors breaks this equivalence. In this case, the test statistic in unfolded space contains factors of $U^{\mathsf{T}}U$, as can be seen by expressing it in terms of reconstructed-space quantities:
-\begin{equation}\label{eq:chi2_unfd_expanded}
-    \chi^2_{\text{proj}} = \boldsymbol{\delta}^{\mathsf{T}} \, U^{\mathsf{T}} U \, V_r \, ( V_r^{\mathsf{T}} \, U^{\mathsf{T}} U \, C_{\text{total}} \, U^{\mathsf{T}} U \, V_r )^{-1} \, V_r^{\mathsf{T}} \, U^{\mathsf{T}} U \, \boldsymbol{\delta},
-\end{equation}
-which reduces to Eq. \eqref{eq:chi2_reco} only when $U^{\mathsf{T}} U = I$, i.e. when the unfolding matrix is orthogonal. Since unfolding matrices are generically not orthogonal, the two test statistics yield different numerical values for the same data and prediction. The unfolded-space formulation is the appropriate one for testing published cross-section results, as it accounts for effects introduced by the unfolding in the definition of the non-null subspace.
+where the symmetric matrix $G = W_{r}^{\mathsf{T}} \, W_{r}$ acts as the unfolding matrix of the reduced system, and cancels similarly to the unprojected case. In the approach of Eq. \eqref{eq:chi2_unfd_expanded}, the full residual, including the null-space components, is first rotated by $U$ into directions that are no longer orthogonal to the range. The unfolded-space projector then picks up this null-space contamination. Projecting first in reconstructed space avoids this by removing the null directions before unfolding can mix them with the physical subspace.
+
+For this reason, Eq. \eqref{eq:chi2_reduced} is the recommended definition of the range-projected $\chi^2$.
 
 \subsection{Statistical validity}
 
 Under the null hypothesis, the residual $\mathbf{r}$ is drawn from a multivariate Gaussian distribution with mean zero and covariance $V_{\text{total}}$. The reduced residual $\tilde{\mathbf{r}} = W_r^{\mathsf{T}} \, \mathbf{r}$ is a linear transformation of a Gaussian vector, therefore Gaussian itself with mean zero and covariance $\tilde{V}_{\text{total}} = W_r^{\mathsf{T}} \, V_{\text{total}} \, W_r$. Provided that $\tilde{V}_{\text{total}}$ is positive definite, guarantees that $\tilde{\mathbf{r}}^{\mathsf{T}} \tilde{V}_{\text{total}}^{-1} \tilde{\mathbf{r}} \sim \chi^2(r)$. The positive definiteness of $\tilde{V}_{\text{total}}$ requires $V_{\text{total}}$ to have nonzero variance along every direction in the range of the projector $P_{\text{true}}$, which is generically satisfied. This can be verified by checking that all eigenvalues of $\tilde{V}_{\text{total}}$ are strictly positive.
 
-The validity of the range-projected $\chi^{2}$ can also be understood from the general theory of quadratic forms of correlated normal variables. Theorem 9.2.2 of Ref. \cite{Rao:1971} establishes that if $\mathbf{Y} \sim \mathcal{N}(0, \Sigma)$ with $\mathrm{rank}(\Sigma) = k$, then $\mathbf{Y}^{\mathsf{T}} \Sigma^{+} \mathbf{Y} \sim \chi^2(k)$ for any choice of generalized inverse $\Sigma^{+}$. Assuming the null hypothesis, the projected residual $P_{\text{true}} \mathbf{r}$ is normally distributed with covariance $P_{\text{true}} V_{\text{total}} P_{\text{true}}$, which has rank $r$ by construction. The formulation of Eq. \eqref{eq:chi2_proj_unfd} with the Moore--Penrose pseudoinverse is  a specific instance of this general result. The key distinction from purely numerical approaches to handling singular covariance matrices is that the rank is not determined by an eigenvalue threshold applied to the covariance, but is predicted exactly via the combination matrix $\Omega$ from the structure of the measurement.
+The validity of the range-projected $\chi^{2}$ can also be understood from the general theory of quadratic forms of correlated normal variables. Theorem 9.2.2 of Ref. \cite{Rao:1971} establishes that if $\mathbf{Y} \sim \mathcal{N}(0, \Sigma)$ with $\mathrm{rank}(\Sigma) = k$, then $\mathbf{Y}^{\mathsf{T}} \Sigma^{+} \mathbf{Y} \sim \chi^2(k)$ for any choice of generalized inverse $\Sigma^{+}$. Assuming the null hypothesis, the projected residual $P_{\text{true}} \mathbf{r}$ is normally distributed with covariance $P_{\text{true}} V_{\text{total}} P_{\text{true}}$, which has rank $r$ by construction. The formulation of Eq. \eqref{eq:chi2_proj_reco} with the Moore--Penrose pseudoinverse is  a specific instance of this general result. The key distinction from purely numerical approaches to handling singular covariance matrices is that the rank is not determined by an eigenvalue threshold applied to the covariance, but is predicted exactly via the combination matrix $\Omega$ from the structure of the measurement.
 
 \subsection{Relation to alternative approaches}
 
@@ -327,6 +331,10 @@ The frequentist coverage confirms these observations. At the 68.3\% confidence l
 	\caption{Confidence regions in the $(\kappa, \alpha)$ plane from the Asimov dataset, showing the 68\% and 95\% CL contours for the range-projected (blue) and unprojected (red) test statistics. The star marks the true parameter values; the squares indicate the mean best-fit points across $10^6$ toys.}
 	\label{fig:toy_2d_scan}
 \end{figure}
+
+\section{Realistic example}
+
+
 
 \begin{comment}
 \section{Practical implementation guide}
