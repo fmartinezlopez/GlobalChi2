@@ -189,6 +189,7 @@ where the first sum runs over the events in the varied-model sample and the seco
 In practice, whether the eigenvalues of $C_{\text{total}}$ along the formerly null directions are exactly zero or merely smaller than the physical eigenvalues, including these directions in a $\chi^{2}$ test via standard matrix inversion produces inflated values with the wrong effective number of degrees of freedom. A valid goodness-of-fit test must therefore be restricted to the subspace where the measurement carries genuine sensitivity, which is the role of the projection method developed in the following section.
 
 \section{Range-projected \boldmath{$\chi^{2}$} test statistic}
+\label{sec:test_statistic}
 
 The discussion presented in Sec. \ref{sec:constraints} established that the event-sharing structure of the multi-distribution measurement imposes $N_{\text{null}}$ linear constraints, encoded in the null space of the combination matrix $\Omega$, which emerges as a rank deficiency in $C_{\text{stat}}$. A global goodness-of-fit test statistic must therefore be formulated in the subspace orthogonal to these constrained directions, where independent statistical information is available.
 
@@ -211,6 +212,7 @@ Since $U$ is invertible, $W_{r}$ has the same rank as $V_{r}$ and the number of 
 In practice, the eigenvalues of $\Omega^{\mathsf{T}} \Omega$ that are technically zero take small numerical values. The threshold for identifying these can be set relative to the largest eigenvalue (e.g., $s_{i} / s_{1} < 10^{-10}$). In most cases, a clear spectral gap of several orders of magnitude separates the physical eigenvalues from the numerical noise, making the identification unambiguous.
 
 \subsection{Test statistic definition}
+\label{subsec:chi2_definition}
 
 The goodness-of-fit test is evaluated in reconstructed space, where the residual vector is given by $\boldsymbol{\delta} = \mathbf{d} - \Delta \, \boldsymbol{\varphi}_{\text{pred}}$, where $\mathbf{d}$ is the background-subtracted data, $\Delta$ is the detector response matrix, and $\boldsymbol{\varphi}_{\text{pred}}$ is a truth-level model prediction. The range-projected $\chi{^2}$ is defined as:
 \begin{equation}\label{eq:chi2_proj_reco}
@@ -332,21 +334,27 @@ The frequentist coverage confirms these observations. At the 68.3\% confidence l
 	\label{fig:toy_2d_scan}
 \end{figure}
 
-\section{Realistic example}
+\section{Realistic fake data study}
 
+The toy study presented in the previous section validates the usage of the range-projected $\chi^{2}$ test statistic in a controlled setting, with an analytic cross-section model and known input parameters. Now, we demonstrate that the same pathology arises, and the same fix applies, when working with a realistic measurement setup. In this case, we use a real neutrino flux, neutrino event generators, cross-section systematic uncertainties, and unfolding strategy. The latter is a key addition over the toy study, as it allows us to verify numerically the equivalence between the results in reconstructed and unfolded space, established in Sec. \ref{subsec:chi2_definition}. In addition, we show that the projected test statistic between generator predictions, 
 
+\subsection{Model and measurement setup}
 
-\begin{comment}
-\section{Practical implementation guide}
+The central-value model is built from GENIE v3.6.2 \cite{Andreopoulos:2009rq} using the \texttt{AR23\_20i\_00\_000} tune on an $^{40}\mathrm{Ar}$ target. The fake-data model, which plays the role of the unknown true cross section, is NuWro v25.11 \cite{Golan:2012rfa} on the same target. Both generators are run with the SBND BNB $\nu_\mu$ flux over the energy range $0$--$10 ~ \mathrm{GeV}$. Since the flux is shared, flux systematic uncertainties cancel by construction and are not considered.
 
-\subsection{Step-by-step recipe}
+Events are selected using a topological CC1$\mu$1$p$0$\pi$ definition applied identically to both generators. We require exactly one muon, exactly one proton above $40~\mathrm{MeV}$ kinetic energy, and no charged or neutral mesons above $50~\mathrm{MeV}$ in the final state. This topological selection captures CCQE, CCMEC, and CCRES events where the pion was absorbed in final-state interactions.
 
-\subsection{What to include in data releases}
+The detector model is the same as in the toy study. For each candidate event, we apply a Gaussian momentum and angular smearing ($\sigma_p = 5\%$, $\sigma_\theta = 1^\circ$), and a sigmoid efficiency threshold at $p_\text{thr} = 100~\mathrm{MeV}$ with a width $w = 20~\mathrm{MeV}$ to the primary muon. The analysis binning is also shared with the toy study. We consider the $p_{\mu}$ (5 bins) and the $\cos\theta_{\mu}$ (5 bins) marginal distributions, as well as a 2D $p_{\mu}$ distribution sliced in $\cos\theta_{\mu}$ (3 slices with 4 bins each), for a total of $N_\text{bins} = 22$ bins across 3 blocks.
 
-\subsection{Compatibility notes}
+One million GENIE events are generated and used to construct the response matrix and estimate the systematic uncertainties. One million NuWro events are generated separately; $5{,}000$ of these are drawn as pseudo-data, with the remainder serving as the high-statistics truth prediction.
 
-\section{Summary and recommendations}
-\end{comment}
+\subsection{Systematic uncertainties and unfolding}
+
+Interaction-model systematic uncertainties are estimated using the GENIE Reweight framework \cite{Andreopoulos:2009rq}, which provides per-event weights at $\pm 1\sigma$ for each systematic knob. Fifteen knobs are varied, spanning the dominant sources of uncertainty for the CC1$\mu$1$p$0$\pi$ topology: four $z$-expansion coefficients for the CCQE axial form factor \cite{Meyer:2016oeg}, RPA screening and Pauli blocking corrections \cite{Nieves:2011pp}, the resonance axial and vector masses and overall normalization \cite{Rein:1980wg}, the CCMEC normalization, two non-resonant single-pion background parameters, and three final-state interaction parameters controlling the pion mean free path, absorption fraction, and charge-exchange fraction \cite{Dytman:2021ohr}. Detector uncertainties are estimated similarly, using $\pm 1\sigma$ variations of the four detector parameters ($\sigma_p$, $\sigma_\theta$, $p_\text{thr}$, $w$). The systematic covariance matrices are constructed via the response-matrix approach described in Sec. \ref{subsec:systematics}.
+
+Each of the three distribution blocks is unfolded independently using the Wiener-SVD approach \cite{Tang:2017rob}, with the response matrix and total data covariance computed block-by-block. The per-block unfolding matrices are assembled into the block-diagonal matrix $U$, and the additional smearing matrix $A_C$ is also constructed from the per-block results. The full covariance is propagated through $U$ as $V_\text{total} = U \, C_\text{total} \, U^{\mathsf{T}}$, preserving the cross-block correlations from event sharing. Truth-level predictions are smeared with $A_C$ before comparison to the unfolded data.
+
+\section{Summary and conclusions}
 
 \acknowledgments
 
