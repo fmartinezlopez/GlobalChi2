@@ -11,9 +11,23 @@
 
 \title{\boldmath Goodness-of-fit for multi-distribution neutrino cross-section measurements with shared events}
 
-\author{F. Mart\'inez L\'opez}
+\begin{comment}
+\author[a]{L. Cooper-Troendle,}
+\author[b]{P. Green,}
+\author[c]{S. Gardiner,}
+\author[d,*]{F. Mart\'inez L\'opez,%
+\note[*]{Corresponding author.}}
+\author[d]{and T. Mohayai}
+\affiliation[a]{University of Pittsburgh, Pittsburgh, PA 15260, USA}
+\affiliation[b]{University of Oxford, Oxford, OX1 3RH, United Kingdom}
+\affiliation[c]{Fermi National Accelerator Laboratory, Batavia, IL 60510, USA}
+\affiliation[d]{Indiana University, Bloomington, IN 47405, USA}
+\end{comment}
+
+\author[*]{F. Mart\'inez L\'opez,%
+\note[*]{Corresponding author.}}
 \author{and T. Mohayai}
-\affiliation{Department of Physics, Indiana University,\\727 E. Third St., Bloomington, IN, USA, 47405}
+\affiliation{Indiana University, Bloomington, IN 47405, USA}
 
 % E-mail addresses: only for the corresponding author
 \emailAdd{frmart@iu.edu}
@@ -363,12 +377,13 @@ The frequentist coverage confirms these observations. At the 68.3\% confidence l
 The toy study presented in the previous section validates the usage of the range-projected $\chi^{2}$ test statistic in a controlled setting, with an analytic cross-section model and known input parameters. Now, we demonstrate that the same pathology arises, and the same fix applies, when working with a realistic measurement setup. In this case, we use a real neutrino flux, neutrino event generators, cross-section systematic uncertainties, and unfolding strategy. The latter is a key addition over the toy study, as it allows us to verify numerically the equivalence between the results in reconstructed and unfolded space, established in Sec. \ref{subsec:chi2_definition}. In addition, we show that the projected test statistic between generator predictions, 
 
 \subsection{Model and measurement setup}
+\label{subsec:real_setup}
 
 The central-value model is built from GENIE v3.6.2 \cite{Andreopoulos:2009rq} using the \texttt{AR23\_20i\_00\_000} tune on an $^{40}\mathrm{Ar}$ target. The fake-data model, which plays the role of the unknown true cross section, is NuWro v25.11 \cite{Golan:2012rfa} on the same target. Both generators are run with the SBND BNB $\nu_\mu$ flux over the energy range $0$--$10 ~ \mathrm{GeV}$. Since the flux is shared, flux systematic uncertainties cancel by construction and are not considered.
 
 Events are selected using a topological CC1$\mu$1$p$0$\pi$ definition applied identically to both generators. We require exactly one muon, exactly one proton above $40~\mathrm{MeV}$ kinetic energy, and no charged or neutral mesons above $50~\mathrm{MeV}$ in the final state. This topological selection captures CCQE, CCMEC, and CCRES events where the pion was absorbed in final-state interactions.
 
-The detector model is the same as in the toy study. For each candidate event, we apply a Gaussian momentum and angular smearing ($\sigma_p = 5\%$, $\sigma_\theta = 1^\circ$), and a sigmoid efficiency threshold at $p_\text{thr} = 100~\mathrm{MeV}$ with a width $w = 20~\mathrm{MeV}$ to the primary muon. The analysis binning is also shared with the toy study. We consider the $p_{\mu}$ (5 bins) and the $\cos\theta_{\mu}$ (5 bins) marginal distributions, as well as a 2D $p_{\mu}$ distribution sliced in $\cos\theta_{\mu}$ (3 slices with 4 bins each), for a total of $N_\text{bins} = 22$ bins across 3 blocks.
+The detector model is the same as in the toy study. For each candidate event, we apply a Gaussian momentum and angular smearing ($\sigma_p = 5\%$, $\sigma_\theta = 1^\circ$), and a sigmoid efficiency threshold at $p_\text{thr} = 100~\mathrm{MeV}$ with a width $w = 20~\mathrm{MeV}$ to the primary muon. Thus, this empty bin is merged with its neighbor, leaving $5+5+(3+4+4)=21$ bins across the three blocks.
 
 One million GENIE events are generated and used to construct the response matrix and estimate the systematic uncertainties. One million NuWro events are generated separately; $5{,}000$ of these are drawn as pseudo-data, with the remainder serving as the high-statistics truth prediction.
 
@@ -386,7 +401,7 @@ Each of the three distribution blocks is unfolded independently using the Wiener
 
 \subsection{Results}
 
-The structural combination matrix $\Omega_\text{struct}$, built from the three-block binning scheme, has rank $17$, yielding $N_{\text{null}}^{\text{struct}} = 21 - 17 = 4$ structural null directions. The full combination matrix $\Omega$, computed from the GENIE event list, reveals one additional kinematic null direction, bringing the total to $N_\text{null} = 5$. This arises because two cells of the common refinement corresponding to high-momentum backward-going muons are not populated by any selected events, a region where the CCQE-like cross section is strongly suppressed. Their absence removes one independent bin combination from $\Omega$, reducing its rank to $16$. The projected test statistic therefore has $r = 16$ degrees of freedom.
+The structural combination matrix $\Omega_\text{struct}$, built from the three-block binning scheme, has rank $17$, yielding $N_{\text{null}}^{\text{struct}} = 21 - 17 = 4$ structural null directions. The full combination matrix $\Omega$, computed from the GENIE event list, reveals one additional kinematic null direction, bringing the total to $N_\text{null} = 5$. This is distinct from the bin merging mentioned in Sec. \ref{subsec:real_setup}. In that case we merged a single bin of zero occupancy, whereas the kinematic null is a linear constraint among the populated bins. It arises because two cells of the common refinement corresponding to high-momentum backward-going muons are not populated by any selected events, a region where the CCQE-like cross section is strongly suppressed. Their absence removes one independent bin combination from $\Omega$, reducing its rank to $16$. The projected test statistic therefore has $r = 16$ degrees of freedom.
 
 Figure \ref{fig:real_distributions} shows the reconstructed-space event distributions in all three blocks. The GENIE CV prediction and its systematic uncertainty band are compared to the NuWro fake-data realization and the NuWro prediction. The GENIE systematic band does not fully cover the NuWro prediction in several bins, reflecting genuine model differences that the $\chi^2$ test should be able to identify.
 
