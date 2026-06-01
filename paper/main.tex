@@ -307,6 +307,7 @@ The eigenvalue spectrum of $C_{\text{stat}}$ confirms this. It shows $5$ eigenva
 \end{figure}
 
 \subsection{Goodness-of-fit validation}
+\label{subsec:toy_gof}
 
 The calibration of the projected and unprojected $\chi^{2}$ test statistics is assessed with a toy Monte Carlo exercise at the true hypothesis point. A high-statistics simulation of the fake model is used to estimate the event distribution on a fine reconstructed-space grid, defined by the union of all bin edges in $p_{\mu}$ and $\cos\theta_{\mu}$ across the three blocks, corresponding to the common refinement described in Sec. \ref{subsec:null_space}. Each toy experiment draws a Poisson-fluctuated total event count and distributes them across the fine grid via multinomial sampling. These events are then projected onto the three analysis blocks, preserving the inter-block correlations from event sharing. Systematic fluctuations are added as correlated Gaussian throws from the Cholesky decomposition of $C_{\text{syst}}$. The $\chi^{2}$ is evaluated in reconstructed space, comparing each toy to the forward-folded prediction at the true hypothesis, for both the unprojected statistic, using the direct inverse of $C_{\text{total}}$, and the range-projected statistic of Eq. \eqref{eq:chi2_reco}.
 
@@ -353,6 +354,46 @@ One million GENIE events are generated and used to construct the response matrix
 Interaction-model systematic uncertainties are estimated using the GENIE Reweight framework \cite{Andreopoulos:2009rq}, which provides per-event weights at $\pm 1\sigma$ for each systematic knob. Fifteen knobs are varied, spanning the dominant sources of uncertainty for the CC1$\mu$1$p$0$\pi$ topology: four $z$-expansion coefficients for the CCQE axial form factor \cite{Meyer:2016oeg}, RPA screening and Pauli blocking corrections \cite{Nieves:2011pp}, the resonance axial and vector masses and overall normalization \cite{Rein:1980wg}, the CCMEC normalization, two non-resonant single-pion background parameters, and three final-state interaction parameters controlling the pion mean free path, absorption fraction, and charge-exchange fraction \cite{Dytman:2021ohr}. Detector uncertainties are estimated similarly, using $\pm 1\sigma$ variations of the four detector parameters ($\sigma_p$, $\sigma_\theta$, $p_\text{thr}$, $w$). The systematic covariance matrices are constructed via the response-matrix approach described in Sec. \ref{subsec:systematics}.
 
 Each of the three distribution blocks is unfolded independently using the Wiener-SVD approach \cite{Tang:2017rob}, with the response matrix and total data covariance computed block-by-block. The per-block unfolding matrices are assembled into the block-diagonal matrix $U$, and the additional smearing matrix $A_C$ is also constructed from the per-block results. The full covariance is propagated through $U$ as $V_\text{total} = U \, C_\text{total} \, U^{\mathsf{T}}$, preserving the cross-block correlations from event sharing. Truth-level predictions are smeared with $A_C$ before comparison to the unfolded data.
+
+\begin{figure}[!t]
+    \includegraphics[width=1.00\linewidth]{images/real_event_dist.pdf}
+    \caption{Reconstructed-space event distributions for the realistic fake-data study. The GENIE CV prediction (filled histograms) and systematic uncertainty bands (shaded) are compared to the NuWro prediction (red line) and a $5{,}000$-event NuWro pseudo-data realization (points with statistical error bars). The top row shows the $p_\mu$ and $\cos\theta_\mu$ marginals; the bottom row shows the three $\cos\theta_\mu$ slices of the 2D block.}
+    \label{fig:real_distributions}
+\end{figure}
+
+\subsection{Results}
+
+The structural combination matrix $\Omega_\text{struct}$, built from the three-block binning scheme, has rank $17$, yielding $N_{\text{null}}^{\text{struct}} = 21 - 17 = 4$ structural null directions. The full combination matrix $\Omega$, computed from the GENIE event list, reveals one additional kinematic null direction, bringing the total to $N_\text{null} = 5$. This arises because two cells of the common refinement corresponding to high-momentum backward-going muons are not populated by any selected events, a region where the CCQE-like cross section is strongly suppressed. Their absence removes one independent bin combination from $\Omega$, reducing its rank to $16$. The projected test statistic therefore has $r = 16$ degrees of freedom.
+
+Figure \ref{fig:real_distributions} shows the reconstructed-space event distributions in all three blocks. The GENIE CV prediction and its systematic uncertainty band are compared to the NuWro fake-data realization and the NuWro prediction. The GENIE systematic band does not fully cover the NuWro prediction in several bins, reflecting genuine model differences that the $\chi^2$ test should be able to identify.
+
+\begin{figure}[!t]
+    \includegraphics[width=\textwidth]{images/real_unfd_dist.pdf}
+    \caption{Unfolded event distributions for the realistic fake-data study. The GENIE (blue) and NuWro (red) truth-level predictions are smeared through the additional smearing matrix $A_C$ for comparison with the unfolded fake data (points with propagated uncertainties). Per-block $\chi^2$ values are annotated in each panel.}
+    \label{fig:real_unfolded}
+\end{figure}
+
+Figure \ref{fig:real_unfolded} shows the corresponding unfolded distributions, with the GENIE and NuWro truth-level predictions smeared through the additional smearing matrix $A_C$. Per-block $\chi^2$ values, computed using only the block-diagonal covariance, are annotated in each panel. These are well-behaved for the NuWro comparison, confirming that the unfolding correctly recovers the true distribution at the per-block level. The GENIE comparison shows mild tension in some blocks.
+
+\begin{table}[!h]
+	\caption{Global $\chi^2$ values for the NuWro fake data compared to the GENIE and NuWro truth-level predictions. The projected test statistic has $N_{\text{bins}} - N_{\text{null}} = 16$ degrees of freedom; the unprojected has $N_{\text{bins}} = 21$.}
+	\begin{center}
+        \begin{small}
+			\begin{tabular}{ccc}
+                \parbox{6em}{\centering Test statistic}         &  \parbox{4em}{\centering GENIE} & \parbox{4em}{\centering NuWro} \\[1mm] \hline
+                \strutlike Unprojected $\chi^{2} / \text{ndof}$ &                      252.4 / 21 &                     121.9 / 21 \\[1mm]
+                Projected $\chi^{2} / \text{ndof}$              &                      154.4 / 16 &                      15.7 / 16 \\[1mm]
+            \end{tabular} 
+        \end{small}
+	\end{center}
+	\label{tab:real_chi2}
+\end{table}
+
+Table \ref{tab:real_chi2} summarizes the global $\chi^2$ results. The unprojected statistic yields $121.9 / 21$ for the NuWro prediction. This results in a disproportionate rejection of the correct model, entirely driven by the null-space contamination. The projected statistic gives $15.7 / 16$, consistent with the expected $\chi^2(16)$ distribution and confirming that the method is correctly calibrated. This was further validated with $10^5$ pseudo-experiments, which confirmed that the projected $\chi^2$ distribution follows $\chi^2(16)$ while the unprojected distribution does not follow $\chi^2(21)$, consistent with the toy study results of Sec. \ref{subsec:toy_gof}.
+
+The projected statistic retains full discriminating power against the wrong model. The comparison to GENIE yields $154.4 / 16$, a strong rejection indicating that the GENIE uncertainty budget cannot accommodate the NuWro prediction. By contrast, the unprojected statistic gives $252.4 / 21$ for GENIE, also a strong rejection but indistinguishable in practice from its $121.9 / 21$ for NuWro. Without the projection, both the correct and incorrect models are rejected, and the test provides no useful discrimination.
+
+Finally, the projected $\chi^2$ was verified to give identical numerical values whether computed in reconstructed or unfolded space, for both the GENIE and NuWro predictions. This confirms the equivalence established in Sec. \ref{subsec:chi2_definition} and validates the practical implementation of the projection in the presence of unfolding.
 
 \section{Summary and conclusions}
 
