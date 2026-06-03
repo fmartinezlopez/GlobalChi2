@@ -95,14 +95,14 @@ After propagation through the block-diagonal unfolding, the statistical covarian
 
 The previous discussion shows that the statistical covariance between any two bins is determined solely by the events they share. We now formalize this observation to derive an exact formula for the rank of $C_{\text{stat}}$, and therefore for the number of directions in bin space that carry zero statistical variance.
 
-For each event $e$, we can define the indicator vector $\bm{\phi}_{e} \coloneqq (\phi_{e,i})_{i = 1}^{N_{\text{bins}}}$ such that $\phi_{e,i} = 1$ if $i \in \text{bins}(e)$ and $\phi_{e,i} = 0$ if $i \notin \text{bins}(e)$, where $\text{bins}(e)$ is the set of bins event $e$ populates across all distributions. The indicator vector acts as an identifier of each event in the combined measurement. For example, in a two-block measurement with 3 bins each, an event populating bin 2 of block 1 and bin 1 of block 2 has indicator vector $\bm{\phi}_{e} = (0,1,0,1,0,0)$. The statistical covariance matrix can then be re-written in terms of indicator vectors as:
+For each event $e$, we can define the indicator vector $\boldsymbol{\phi}_{e} \coloneqq (\phi_{e,i})_{i = 1}^{N_{\text{bins}}}$ such that $\phi_{e,i} = 1$ if $i \in \text{bins}(e)$ and $\phi_{e,i} = 0$ if $i \notin \text{bins}(e)$, where $\text{bins}(e)$ is the set of bins event $e$ populates across all distributions. The indicator vector acts as an identifier of each event in the combined measurement. For example, in a two-block measurement with 3 bins each, an event populating bin 2 of block 1 and bin 1 of block 2 has indicator vector $\boldsymbol{\phi}_{e} = (0,1,0,1,0,0)$. The statistical covariance matrix can then be re-written in terms of indicator vectors as:
 \begin{equation}\label{eq:cstat_outer}
-    C_{\text{stat}} = \sum_{e} w_{e}^{2} \, \bm{\phi}_{e} \, \bm{\phi}_{e}^{\mathsf{T}}.
+    C_{\text{stat}} = \sum_{e} w_{e}^{2} \, \boldsymbol{\phi}_{e} \, \boldsymbol{\phi}_{e}^{\mathsf{T}}.
 \end{equation}
 
-This outer-product decomposition makes the rank structure of $C_{\text{stat}}$ clear. The rank of the statistical covariance matrix equals the dimension of $\mathrm{span}\{\bm{\phi}_e\}$, which depends only on the distinct indicator vectors present, not on their weights. Since all weights are $w_{e} > 0$ no indicator vector is removed from the sum, and the column space of $C_{\text{stat}}$ is exactly $\mathrm{span}\{\bm{\phi}_e\}$.
+This outer-product decomposition makes the rank structure of $C_{\text{stat}}$ clear. The rank of the statistical covariance matrix equals the dimension of $\mathrm{span}\{\boldsymbol{\phi}_e\}$, which depends only on the distinct indicator vectors present, not on their weights. Since all weights are $w_{e} > 0$ no indicator vector is removed from the sum, and the column space of $C_{\text{stat}}$ is exactly $\mathrm{span}\{\boldsymbol{\phi}_e\}$.
 
-We define the bin-combination matrix $\Omega$ as the matrix whose rows are the unique indicator vectors among $\{\bm{\phi}_e\}$. Each row of $\Omega$ represent a distinct pattern of bin occupancy across the blocks. By construction the row space of $\Omega$ equals $\mathrm{span}\{\bm{\phi}_e\}$, and therefore:
+We define the bin-combination matrix $\Omega$ as the matrix whose rows are the unique indicator vectors among $\{\boldsymbol{\phi}_e\}$. Each row of $\Omega$ represent a distinct pattern of bin occupancy across the blocks. By construction the row space of $\Omega$ equals $\mathrm{span}\{\boldsymbol{\phi}_e\}$, and therefore:
 \begin{equation}\label{eq:rank_formula}
     \mathrm{rank} (C_{\text{stat}}) = \mathrm{rank} (\Omega).
 \end{equation}
@@ -130,7 +130,7 @@ The variables used in a measurement are drawn from a set $\{v_{1}, \ldots v_{D}\
 \end{equation}
 with $M_{v} = |\mathcal{E}_{v}| - 1$ denoting the number of refined bins for variable $v$. Since $\mathcal{E}_{v}$ contains all the bin edges from every block that uses that variable, each refined bin is contained entirely within one original bin of every such block.
 
-The common refinement of all blocks is the Cartesian product of the refined bins across all variables, denoted by $\mathcal{R}$. Each cell $c \in \mathcal{R}$ specifies a refined bin index for every variable in the measurement. For every block $b$, there exists a unique mapping $\beta_{b}(c)$ between each cell $c$ and an original bin in said block. The elements of the indicator vector $\bm{\phi}_{c} \coloneqq (\phi_{c,i})_{i=1}^{N_{\text{bins}}}$ associated to cell $c$ can be written as:
+The common refinement of all blocks is the Cartesian product of the refined bins across all variables, denoted by $\mathcal{R}$. Each cell $c \in \mathcal{R}$ specifies a refined bin index for every variable in the measurement. For every block $b$, there exists a unique mapping $\beta_{b}(c)$ between each cell $c$ and an original bin in said block. The elements of the indicator vector $\boldsymbol{\phi}_{c} \coloneqq (\phi_{c,i})_{i=1}^{N_{\text{bins}}}$ associated to cell $c$ can be written as:
 \begin{equation}
     \phi_{c,i} = \begin{cases}
         1 & \text{if } i = \beta_b(c) \text{ for any block } b, \\
@@ -139,7 +139,7 @@ The common refinement of all blocks is the Cartesian product of the refined bins
 \end{equation}
 If block $b$ does not use variable $v$ then $\beta_{b}$ is independent of the refined bin index in $v$. Therefore, multiple cells may produce identical indicator vectors.
 
-The structural combination matrix $\Omega_{\text{struct}}$ is defined as the matrix whose rows are the unique indicator vectors from the cells of the common refinement $\{\bm{\phi}_{c} \, : \, c \in \mathcal{R}\}$. By construction, every indicator vector that appears in the $\Omega$ matrix obtained from the MC events is also present in $\Omega_{\text{struct}}$, therefore:
+The structural combination matrix $\Omega_{\text{struct}}$ is defined as the matrix whose rows are the unique indicator vectors from the cells of the common refinement $\{\boldsymbol{\phi}_{c} \, : \, c \in \mathcal{R}\}$. By construction, every indicator vector that appears in the $\Omega$ matrix obtained from the MC events is also present in $\Omega_{\text{struct}}$, therefore:
 \begin{equation}\label{eq:hierarchy}
     \mathrm{rank}(\Omega) \leq \mathrm{rank}(\Omega_{\text{struct}}) \leq N_{\text{bins}}.
 \end{equation}
@@ -169,18 +169,18 @@ Previously, we established that the event-sharing structure imposes $N_{\text{nu
 
 A systematic variation $s$ produces a modified vector of expected events $\mathbf{n}_{s}$, whose departure from the central-value prediction can be expressed in terms of a shift vector:
 \begin{equation}
-    \bm{\xi}_{s} = \mathbf{n}_{s} - \mathbf{n}_{\text{CV}}.
+    \boldsymbol{\xi}_{s} = \mathbf{n}_{s} - \mathbf{n}_{\text{CV}}.
 \end{equation}
-The different contributions to $C_{\text{syst}}$ are constructed from the outer product of these shift vectors. A null direction $\mathbf{x}$ of $C_{\text{stat}}$ remains a null direction of $C_{\text{total}}$ if and only if $\mathbf{x} \cdot \bm{\xi}_{s} = 0$ for every systematic variation in the uncertainty budget. The question is therefore whether the shift vectors have nonzero projections onto the structural and kinematic null spaces.
+The different contributions to $C_{\text{syst}}$ are constructed from the outer product of these shift vectors. A null direction $\mathbf{x}$ of $C_{\text{stat}}$ remains a null direction of $C_{\text{total}}$ if and only if $\mathbf{x} \cdot \boldsymbol{\xi}_{s} = 0$ for every systematic variation in the uncertainty budget. The question is therefore whether the shift vectors have nonzero projections onto the structural and kinematic null spaces.
 
 Consider first the simplest case, where a systematic $s$ acts by reweighting the reconstructed event counts directly. Each event $e$ is assigned a modified weight $w_{e}^{(s)}$ while preserving its bin assignments. The shift vector can then be written as:
 \begin{equation}
-    \bm{\xi}_{s} = \sum_{e} (w_{e}^{(s)} - w_{e}) \, \bm{\phi}_{e}.
+    \boldsymbol{\xi}_{s} = \sum_{e} (w_{e}^{(s)} - w_{e}) \, \boldsymbol{\phi}_{e}.
 \end{equation}
 For any null vector $\mathbf{x}$ which satisfies the null-space condition of Eq. \eqref{eq:null_condition}, the projection of $\mathbf{x}$ onto the shift vector gives:
 \begin{equation}
     \begin{split}
-        \mathbf{x} \cdot \bm{\xi}_{s} &= \sum_{e} (w_{e}^{(s)} - w_{e}) \, (\bm{\phi}_{e} \cdot \mathbf{x})\\
+        \mathbf{x} \cdot \boldsymbol{\xi}_{s} &= \sum_{e} (w_{e}^{(s)} - w_{e}) \, (\boldsymbol{\phi}_{e} \cdot \mathbf{x})\\
         &= \sum_{e} (w_{e}^{(s)} - w_{e}) \sum_{i=1}^{N_{\text{bins}}} \phi_{e,i}\, x_{i}\\
         &= 0,
     \end{split}
@@ -189,17 +189,17 @@ since the inner sum vanishes for every event. Direct reweighting therefore prese
 
 A qualitatively different situation arises when the systematic uncertainties are propagated through the response matrix rather than changing the event counts per bin directly. In this approach, adopted as the standard prescription in MicroBooNE for neutrino interaction uncertainties \cite{Gardiner:2024gdy}, a modified response matrix $\Delta_{s}'$, mapping true bins to reconstructed bins under the given variation, is constructed for each systematic uncertainty. This matrix is obtained either by reweighting the events used to build the nominal response matrix or from an independent MC sample with varied simulation parameters. In this case, the predicted reconstructed counts for systematic variation $s$ are:
 \begin{equation}
-    \mathbf{n}_{s} = \Delta'_{s} \, \bm{\varphi}_{\text{CV}},
+    \mathbf{n}_{s} = \Delta'_{s} \, \boldsymbol{\varphi}_{\text{CV}},
 \end{equation}
-where $\bm{\varphi}_{\text{CV}}$ is the central-value truth prediction. The shift vector is then:
+where $\boldsymbol{\varphi}_{\text{CV}}$ is the central-value truth prediction. The shift vector is then:
 \begin{equation}
-    \bm{\xi}_{s} = (\Delta_{s}' - \Delta) \, \bm{\varphi}_{\text{CV}}.
+    \boldsymbol{\xi}_{s} = (\Delta_{s}' - \Delta) \, \boldsymbol{\varphi}_{\text{CV}}.
 \end{equation}
-Since $\Delta$ is block-diagonal, the difference $\Delta'_{s} - \Delta$ acts independently on each block, projecting the nominal truth vector through block-specific changes in efficiency and migration. The per-event coupling that makes direct reweighting respect all null directions is absent in this prescription. When the weight of an event changes, it affects simultaneously every block it populates; the response-matrix method, in contrast, processes each block independently through its own sub-matrix. The projection of $\bm{\xi}_{s}$ onto any null vector, whether structural or kinematic, therefore involves differences in how each block responds to the same truth-level prediction, and in general is nonzero. Response-matrix variations thus break both types of null directions, regardless of how $\Delta_{s}'$ is obtained.
+Since $\Delta$ is block-diagonal, the difference $\Delta'_{s} - \Delta$ acts independently on each block, projecting the nominal truth vector through block-specific changes in efficiency and migration. The per-event coupling that makes direct reweighting respect all null directions is absent in this prescription. When the weight of an event changes, it affects simultaneously every block it populates; the response-matrix method, in contrast, processes each block independently through its own sub-matrix. The projection of $\boldsymbol{\xi}_{s}$ onto any null vector, whether structural or kinematic, therefore involves differences in how each block responds to the same truth-level prediction, and in general is nonzero. Response-matrix variations thus break both types of null directions, regardless of how $\Delta_{s}'$ is obtained.
 
 A third mechanism applies when systematic uncertainties are evaluated by directly comparing reconstructed event counts from independent MC samples simulated with nominal and varied parameters. In this case, the shift vector takes the form:
 \begin{equation}
-    \bm{\xi}_{s} = \sum_{e'} w_{e'}^{(s)} \, \bm{\phi}_{e'}^{(s)} - \sum_{e} w_e \, \bm{\phi}_{e},
+    \boldsymbol{\xi}_{s} = \sum_{e'} w_{e'}^{(s)} \, \boldsymbol{\phi}_{e'}^{(s)} - \sum_{e} w_e \, \boldsymbol{\phi}_{e},
 \end{equation}
 where the first sum runs over the events in the varied-model sample and the second sum over the nominal sample. Since each event in both samples populates exactly one bin per block, their difference projects to zero onto the structural null directions by an analogous argument to that used for the direct reweighting. Kinematic null directions, however, can be lifted if the variation scatters events into reconstructed-bin combinations absent in the nominal sample. In that case, new indicator vectors appear that are not rows of $\Omega$, potentially breaking the corresponding constraints. Detector systematic uncertainties, which usually require independent samples with modified simulation parameters that cannot be captured by event reweighting, are the typical example where this prescription is applied.
 
@@ -208,7 +208,7 @@ In practice, whether the eigenvalues of $C_{\text{total}}$ along the formerly nu
 \section{Range-projected \boldmath{$\chi^{2}$} test statistic}
 \label{sec:test_statistic}
 
-Before constructing the test statistic, we must establish why restricting it to the non-null subspace discards no physical information. Along a null direction $\mathbf{x}$ of $C_{\text{stat}}$ the event-sharing constraint $\Omega\mathbf{x} = 0$ holds identically. The same selected events enter the bin combinations on both sides, so the data value along $\mathbf{x}$ is fixed by event conservation rather than measured. Any prediction, forward-folded through the detector response matrix, respects the identical constraint. The residual along $\mathbf{x}$ is therefore zero by construction, up to systematic or numerical excursions that carry no statistical meaning. Therefore, the measurement has no power to constrain a model in this direction. Removing these directions thus removes no genuine sensitivity, only the ill-defined contributions identified in Sec. \ref{subsec:systematics}. This holds exactly to the extent that the event-sharing structure is exact; when sharing is only approximate the null directions acquire small but nonzero variance, a regime we return to in Sec. \ref{sec:limitations}. Under the exact-sharing assumption, then, it is safe to formulate the global goodness-of-fit test statistic in the subspace orthogonal to the constrained directions, which we now construct.
+Before constructing the test statistic, we must establish why restricting it to the non-null subspace discards no physical information. Along a null direction $\mathbf{x}$ of $C_{\text{stat}}$ the event-sharing constraint $\Omega\mathbf{x} = 0$ holds identically. The same selected events enter the bin combinations on both sides, so the data value along $\mathbf{x}$ is fixed by event conservation rather than measured. Any prediction forward-folded through the detector response matrix respects the same constraint. The residual along $\mathbf{x}$ is therefore zero by construction, up to systematic or numerical excursions that carry no statistical meaning. Therefore, the measurement has no power to constrain a model in this direction; discarding these directions removes no genuine sensitivity, only the ill-defined contributions identified in Sec. \ref{subsec:systematics}. This holds exactly to the extent that the event-sharing structure is exact; when sharing is only approximate the null directions acquire small but nonzero variance, a regime we return to in Sec. \ref{sec:limitations}. Under the exact-sharing assumption, then, it is safe to formulate the global goodness-of-fit test statistic in the subspace orthogonal to the constrained directions, which we now construct.
 
 The constraints are most naturally identified in reconstructed space, where the combination matrix is constructed. The non-null subspace can be obtained decomposing $\Omega^{\mathsf{T}} \Omega$. This matrix is a square $N_{\text{bins}} \times N_{\text{bins}}$ matrix with the same column space and null space as $\Omega$ itself, making it a more compact representation of the same information. We can write its eigendecomposition as:
 \begin{equation}\label{eq:oto_svd}
@@ -231,7 +231,7 @@ In practice, the eigenvalues of $\Omega^{\mathsf{T}} \Omega$ that are technicall
 \subsection{Test statistic definition}
 \label{subsec:chi2_definition}
 
-The goodness-of-fit test is evaluated in reconstructed space, where the residual vector is given by $\boldsymbol{\delta} = \mathbf{d} - \Delta \, \boldsymbol{\varphi}_{\text{pred}}$, where $\mathbf{d}$ is the background-subtracted data, $\Delta$ is the detector response matrix, and $\boldsymbol{\varphi}_{\text{pred}}$ is a truth-level model prediction. The range-projected $\chi{^2}$ is defined as:
+The goodness-of-fit test is evaluated in reconstructed space, where the residual vector is given by $\boldsymbol{\delta} = \mathbf{d} - \Delta \, \boldsymbol{\varphi}_{\text{pred}}$, where $\mathbf{d}$ is the background-subtracted data, $\Delta$ is the detector response matrix, and $\boldsymbol{\varphi}_{\text{pred}}$ is a truth-level model prediction. The range-projected $\chi^{2}$ is defined as:
 \begin{equation}\label{eq:chi2_proj_reco}
     \chi^2_{\text{proj}} = \boldsymbol{\delta}^{\mathsf{T}} \, ( P_{\text{reco}} \, C_{\text{total}} \, P_{\text{reco}} )^{+} \, \boldsymbol{\delta},
 \end{equation}
@@ -248,7 +248,7 @@ Substituting into Eq. \eqref{eq:chi2_proj_reco} and defining the reduced residua
 \end{equation}
 which involves only a standard inversion of the $r \times r$ matrix $\tilde{C}_{\text{total}}$. Under the null hypothesis, $\chi^2_{\text{proj}}$ follows a $\chi^2$ distribution with $r = N_{\text{bins}} - N_{\text{null}}$ degrees of freedom.
 
-Without the projection, the $\chi^2$ test statistic takes the same numerical value whether computed in reconstructed or unfolded space, as the factors of the unfolding matrix cancel identically when applying the additional smearing matrix to the predictions \cite{Tang:2017rob}. The introduction of the projector breaks this equivalence when the projection is performed after unfolding. In unfolded-space the residual is defined as $\mathbf{r} = \hat{\boldsymbol{\varphi}} - A_C \, \boldsymbol{\varphi}_{\text{pred}}$, where $\hat{\bm{\varphi}} = U \mathbf{d}$ is the unfolded background-subtracted data and $A_{C} = U \, \Delta$ is the additional smearing matrix. Using the propagated basis $W_r = U \, V_r$, one can construct an analogous test statistic in unfolded space as:
+Without the projection, the $\chi^2$ test statistic takes the same numerical value whether computed in reconstructed or unfolded space, as the factors of the unfolding matrix cancel identically when applying the additional smearing matrix to the predictions \cite{Tang:2017rob}. The introduction of the projector breaks this equivalence when the projection is performed after unfolding. In unfolded-space the residual is defined as $\mathbf{r} = \hat{\boldsymbol{\varphi}} - A_C \, \boldsymbol{\varphi}_{\text{pred}}$, where $\hat{\boldsymbol{\varphi}} = U \mathbf{d}$ is the unfolded background-subtracted data and $A_{C} = U \, \Delta$ is the additional smearing matrix. Using the propagated basis $W_r = U \, V_r$, one can construct an analogous test statistic in unfolded space as:
 \begin{equation}\label{eq:chi2_proj_unfd}
     \chi^2_{\text{unf}} = \tilde{\mathbf{r}}^{\,\mathsf{T}} \, \tilde{V}_{\text{total}}^{-1} \, \tilde{\mathbf{r}},
 \end{equation}
@@ -318,7 +318,7 @@ The analysis uses three bin blocks in reconstructed space: a $p_{\mu}$ marginal 
 \end{figure}
 
 Systematic uncertainties are estimated following the response-matrix approach described in Sec. \ref{subsec:systematics}. Interaction-model variations are obtained by reweighting the CV sample to six alternative model configurations, each producing a varied response matrix $\Delta_{s}$. The shift vector $\boldsymbol{\xi}_{s} = (\Delta_{s} - \Delta) \, \boldsymbol{\varphi}$ captures the effect on the predicted reconstructed-space distribution. Detector variations are obtained by generating eight independent samples with perturbed detector parameters ($\sigma_p$, $\sigma_\theta$,
-$p_\text{thr}$, and $w$), each producing a new response matrix from which a shift vector is computed similarly. The total systematic covariance matrix is $C_\text{syst} = N_\text{var}^{-1} \sum_s \bm{\xi}_{s} \, \bm{\xi}_{s}^\mathsf{T}$, scaled to data statistics. The statistical covariance is computed using Eq. \eqref{eq:cstat_elements}, assuming unit event weights, which captures the inter-block correlations from event sharing.
+$p_\text{thr}$, and $w$), each producing a new response matrix from which a shift vector is computed similarly. The total systematic covariance matrix is $C_\text{syst} = N_\text{var}^{-1} \sum_s \boldsymbol{\xi}_{s} \, \boldsymbol{\xi}_{s}^\mathsf{T}$, scaled to data statistics. The statistical covariance is computed using Eq. \eqref{eq:cstat_elements}, assuming unit event weights, which captures the inter-block correlations from event sharing.
 
 Figure \ref{fig:toy_distributions} shows the predicted event distributions for the CV and fake models in all three blocks of the toy analysis, together with a pseudo-data sample distribution and the systematic uncertainty bands.
 
@@ -413,7 +413,7 @@ Each of the three distribution blocks is unfolded independently using the Wiener
 
 \begin{figure}[!t]
     \includegraphics[width=1.00\linewidth]{images/real_event_dist.pdf}
-    \caption{Reconstructed-space event distributions for the realistic fake-data study. The GENIE CV prediction (filled histograms) and systematic uncertainty bands (shaded) are compared to the NuWro prediction (red line) and a $5{,}000$-event NuWro pseudo-data realization (points with statistical error bars). The top row shows the $p_\mu$ and $\cos\theta_\mu$ marginals; the bottom row shows the three $\cos\theta_\mu$ slices of the 2D block.}
+    \caption{Reconstructed-space event distributions for the event generator study. The GENIE CV prediction (filled histograms) and systematic uncertainty bands (shaded) are compared to the NuWro prediction (red line) and a $5{,}000$-event NuWro pseudo-data realization (points with statistical error bars). The top row shows the $p_\mu$ and $\cos\theta_\mu$ marginals; the bottom row shows the three $\cos\theta_\mu$ slices of the 2D block.}
     \label{fig:real_distributions}
 \end{figure}
 
@@ -425,7 +425,7 @@ Figure \ref{fig:real_distributions} shows the reconstructed-space event distribu
 
 \begin{figure}[!t]
     \includegraphics[width=\textwidth]{images/real_unfd_dist.pdf}
-    \caption{Unfolded event distributions for the realistic fake-data study. The GENIE (blue) and NuWro (red) truth-level predictions are smeared through the additional smearing matrix $A_C$ for comparison with the unfolded fake data (points with propagated uncertainties). Per-block $\chi^2$ values are annotated in each panel.}
+    \caption{Unfolded event distributions for the event generator study. The GENIE (blue) and NuWro (red) truth-level predictions are smeared through the additional smearing matrix $A_C$ for comparison with the unfolded fake data (points with propagated uncertainties). Per-block $\chi^2$ values are annotated in each panel.}
     \label{fig:real_unfolded}
 \end{figure}
 
@@ -458,7 +458,7 @@ The proposed method rests on the assumption that the event-sharing structure is 
 
 In real measurements, this assumption is sometimes only approximate. Distributions extracted from a common sample may nonetheless use different phase-space limits, apply distribution-dependent background subtractions, or define their signal components differently, so that the populations entering different blocks are not strictly identical. Consider the simplest constraint that two block totals be equal, encoded by the direction $\mathbf{x}$ with entries $+1$ on the bins of one block and $-1$ on those of another. Its statistical variance is given by:
 \begin{equation}
-    \mathbf{x}^{\mathsf{T}} C_{\text{stat}}\, \mathbf{x} = \sum_{e} w_e^2\,(\boldsymbol{\phi}_e \cdot \mathbf{x})^2 = \sum_{e\,\in\,\text{one block only}} w_e^2,
+    \mathbf{x}^{\mathsf{T}} C_{\text{stat}}\, \mathbf{x} = \sum_{e} w_e^2\,(\boldsymbol{\phi}_e \cdot \mathbf{x})^2 = \sum_{e\,\notin\,\text{both blocks}} w_e^2,
 \end{equation}
 which vanishes only when every event is shared. When a fraction $\epsilon$ of events is unshared, the variance is of order $\epsilon N$. In this case, the corresponding eigenvalue is lifted from zero into the body of the spectrum by the statistical model itself, before any systematic uncertainty is added. This is a qualitatively different situation from the inflation of Sec. \ref{subsec:toy_gof}. There the variance along some directions was exactly zero in $C_{\text{stat}}$ and lifted only by the systematic model to a value unrelated to any statistical power, so dividing a residual by it produced an unphysical contribution. A direction carrying a genuine variance $\epsilon N$ from real event mismatch is not pathological, the test weights it by its true variance and remains calibrated. The risk of imperfect sharing is therefore not renewed inflation but over-projection, i.e. discarding a direction that now carries a small but real amount of information.
 
@@ -484,7 +484,7 @@ Multi-distribution cross-section measurements that share a common event sample c
 
 This work makes two key contributions. First, we have shown that this rank deficiency is a predictable consequence of the shared-event structure rather than an incidental numerical degeneracy. The constrained directions are exactly those along which the data carry no statistical power, so removing them discards no physical information. Second, we have provided a prescription to compute the number of constrained directions a priori from the binning geometry, decomposing $N_{\text{null}}$ into a structural contribution fixed by the bin edges and a kinematic contribution set by the phase-space occupancy. Because the rank is determined from the measurement geometry rather than from the systematics-contaminated covariance spectrum, the method requires no eigenvalue threshold on the full covariance, where no clean separation between null and physical directions needs to exist.
 
-The method was validated in two settings. In an analytical toy model the projected statistic follows the expected $\chi^{2}(17)$ distribution, while the unprojected statistic is inflated to a mean of $30.6$ and over-rejects the correct model in roughly one third of experiments; we traced the inflation to a noncentrality on the directions lifted out of the null space by systematic uncertainties. In a simulated neutrino--argon measurement with unfolding and multi-source systematic uncertainties, the projected statistic gives $15.7/16$ for the correct model and $154.4/16$ for an incorrect one, recovering both calibration and discriminating power, whereas the unprojected statistic rejects both models indistinguishably. The two studies share five null directions of differing composition, structural in the toy and a mixture of structural and kinematic in the simulated measurement. We note that the projected statistic is mildly over-dispersed relative to the ideal $\chi^{2}$, with a false rejection rate of $5.7\%$ at the nominal $5\%$ level in the toy, reflecting residual non-Gaussianity rather than a failure of the projection.
+The method was validated in two settings. In an analytical toy model the projected statistic follows the expected $\chi^{2}(17)$ distribution, while the unprojected statistic is inflated to a mean of $30.6$ and over-rejects the correct model in roughly one third of experiments; we traced the inflation to a noncentrality on the directions lifted out of the null space by systematic uncertainties. In a simulated neutrino--argon measurement with unfolding and multi-source systematic uncertainties, the projected statistic gives $15.7/16$ for the correct model and $154.4/16$ for an incorrect one, recovering both calibration and discriminating power, whereas the unprojected statistic rejects both models indistinguishably. The two studies share five null directions of differing composition, structural in the toy and a mixture of structural and kinematic in the simulated measurement. We note that the projected statistic is mildly over-dispersed relative to the ideal $\chi^{2}$, with a false rejection rate of $5.7\%$ at the nominal $5\%$ level in the toy, although this does not affect the conclusions
 
 The method assumes that the event-sharing structure is exact. Departures from this assumption are detectable through the spectral gap of the statistical covariance, the comparison of the empirical and structural ranks, and the consistency of the measured block totals, and we have given a corresponding set of diagnostics and remedies. Where the full forward model and nuisance parameterization are available, a binned likelihood fit handles the constraints automatically and is more robust to imperfect sharing; the range-projected $\chi^{2}$ instead requires only the reported cross-block covariance, the binning, and the detector response, making it suited to the goodness-of-fit testing, model tuning, and generator comparison that reuse published measurements.
 
