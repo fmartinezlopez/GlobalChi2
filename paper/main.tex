@@ -80,7 +80,7 @@ The variance for a set of Monte Carlo (MC) events can be estimated from the sum 
 \begin{equation}\label{eq:cstat_elements}
     (C_{\text{stat}})_{ij} = \sum_{e \in (i \cap j)} w_{e}^{2},
 \end{equation}
-where $w_{e}$ is the weight associated to event $e$ belonging to the intersection of bins $i$ and $j$. In the case of measured data the weights are $1$, and the covariance element simplifies to the number of events shared between the bins $n_{ij}$.
+where $w_{e}$ is the weight of event $e$, and the sum runs over events belonging to the intersection of $i$ and $j$. In the case of measured data the weights are $1$, and the covariance element simplifies to the number of events shared between the bins $n_{ij}$.
 
 After propagation through the block-diagonal unfolding, the statistical covariance matrix in unfolded space inherits the same rank structure, as the unfolding matrices for each individual block are invertible. This rank structure has a direct interpretation in terms of the number of distinct event-sharing patterns across distributions, which we discuss next.
 
