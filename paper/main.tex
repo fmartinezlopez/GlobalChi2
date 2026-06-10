@@ -66,7 +66,7 @@ This method provides a systematic framework for reporting the correlations betwe
 \subsection{Statistical covariance from shared events}
 \label{subsec:statistical_cov}
 
-The core idea behind the treatment of the statistical correlations in the blockwise unfolding approach is the partition of any arbitrary pair of overlapping kinematic bins $X$ and $Y$ into a set of three non-overlapping bins $u$, $v$, and $w$. The events in the intersection $X \cap Y$ are assigned to bin $v$, while bin $u$ contains the events in the relative complement of $Y$ in $X$ (i.e. $X \setminus Y$), and bin $w$ corresponds to the relative complement of $X$ in $Y$ (i.e. $Y \setminus X$). Denoting the number of predicted events in each bin as $n_{i}$, and assuming these follow independent Poisson distributions, the covariance between the counts in bins $X$ and $Y$ is given by \cite{Gardiner:2024gdy}
+The statistical correlations in the blockwise unfolding framework can be understood by considering two overlapping bins $X$ and $Y$, which may be partitioned into three non-overlapping regions $u$, $v$, and $w$. The events in the intersection $X \cap Y$ are assigned to bin $v$, while bin $u$ contains the events in the relative complement of $Y$ in $X$ (i.e. $X \setminus Y$), and bin $w$ corresponds to the relative complement of $X$ in $Y$ (i.e. $Y \setminus X$). Denoting the number of predicted events in each bin as $n_{i}$, and assuming these follow independent Poisson distributions, the covariance between the counts in bins $X$ and $Y$ is given by \cite{Gardiner:2024gdy}
 \begin{equation}
     \begin{split}
         \text{Cov}(n_{X}, n_{Y}) &= \text{Cov}(n_{u} + n_{v}, n_{v} + n_{w})\\
