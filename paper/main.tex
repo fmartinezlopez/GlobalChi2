@@ -171,6 +171,8 @@ A systematic variation $s$ produces a modified vector of expected events $\mathb
 \end{equation}
 The different contributions to $C_{\text{syst}}$ are constructed from the outer product of these shift vectors. A null direction $\mathbf{x}$ of $C_{\text{stat}}$ remains a null direction of $C_{\text{total}}$ if and only if $\mathbf{x} \cdot \boldsymbol{\xi}_{s} = 0$ for every systematic variation in the uncertainty budget. The question is therefore whether the shift vectors have nonzero projections onto the structural and kinematic null spaces.
 
+Different systematic prescriptions interact with the null space in qualitatively different ways. Some preserve all null directions, while others partially or completely lift them.
+
 Consider first the simplest case, where a systematic $s$ acts by reweighting the reconstructed event counts directly. Each event $e$ is assigned a modified weight $w_{e}^{(s)}$ while preserving its bin assignments. The shift vector can then be written as
 \begin{equation}
     \boldsymbol{\xi}_{s} = \sum_{e} (w_{e}^{(s)} - w_{e}) \, \boldsymbol{\phi}_{e}.
@@ -185,7 +187,7 @@ For any null vector $\mathbf{x}$ which satisfies the null-space condition of Eq.
 \end{equation}
 since the inner sum vanishes for every event. Direct reweighting therefore preserves the entire null space, adding no rank to $C_{\text{total}}$. Flux uncertainties, which modify the neutrino energy spectrum through per-event weights, are the classic example. Cross-section model variations and hadronic reinteraction uncertainties, when implemented as per-event reweighting, behave identically.
 
-A qualitatively different situation arises when the systematic uncertainties are propagated through the response matrix rather than changing the event counts per bin directly. In this approach, adopted as the standard prescription in MicroBooNE for neutrino interaction uncertainties \cite{Gardiner:2024gdy}, a modified response matrix $\Delta_{s}'$, mapping true bins to reconstructed bins under the given variation, is constructed for each systematic uncertainty. This matrix is obtained either by reweighting the events used to build the nominal response matrix or from an independent MC sample with varied simulation parameters. In this case, the predicted reconstructed counts for systematic variation $s$ are
+A qualitatively different situation arises when the systematic uncertainties are propagated through the response matrix rather than changing the event counts per bin directly. Unlike direct event reweighting, response-matrix variations generally break both structural and kinematic null directions. In this approach, adopted as the standard prescription in MicroBooNE for neutrino interaction uncertainties \cite{Gardiner:2024gdy}, a modified response matrix $\Delta_{s}'$, mapping true bins to reconstructed bins under the given variation, is constructed for each systematic uncertainty. This matrix is obtained either by reweighting the events used to build the nominal response matrix or from an independent MC sample with varied simulation parameters. In this case, the predicted reconstructed counts for systematic variation $s$ are
 \begin{equation}
     \mathbf{n}_{s} = \Delta'_{s} \, \boldsymbol{\varphi}_{\text{CV}},
 \end{equation}
