@@ -96,7 +96,9 @@ For each event $e$, we can define the indicator vector $\boldsymbol{\phi}_{e} \c
 
 This outer-product decomposition makes the rank structure of $C_{\text{stat}}$ clear. The rank of the statistical covariance matrix equals the dimension of $\mathrm{span}\{\boldsymbol{\phi}_e\}$, which depends only on the distinct indicator vectors present, not on their weights. 
 
-Since all weights are $w_{e} > 0$ no indicator vector is removed from the sum, and the column space of $C_{\text{stat}}$ is exactly $\mathrm{span}\{\boldsymbol{\phi}_e\}$. We define the bin-combination matrix $\Omega$ as the matrix whose rows are the unique indicator vectors among $\{\boldsymbol{\phi}_e\}$. Each row of $\Omega$ represents a distinct pattern of bin occupancy across the blocks. By construction the row space of $\Omega$ equals $\mathrm{span}\{\boldsymbol{\phi}_e\}$, and therefore
+%Since all weights are $w_{e} > 0$ no indicator vector is removed from the sum, and the column space of $C_{\text{stat}}$ is exactly $\mathrm{span}\{\boldsymbol{\phi}_e\}$. 
+
+Since all weights satisfy $w_e > 0$, no outer-product term in Eq.~\eqref{eq:cstat_outer} vanishes, and the column space of $C_{\text{stat}}$ is exactly $\mathrm{span}\{\boldsymbol{\phi}_e\}$. We define the bin-combination matrix $\Omega$ as the matrix whose rows are the unique indicator vectors among $\{\boldsymbol{\phi}_e\}$. Each row of $\Omega$ represents a distinct pattern of bin occupancy across the blocks. By construction the row space of $\Omega$ equals $\mathrm{span}\{\boldsymbol{\phi}_e\}$, and therefore
 \begin{equation}\label{eq:rank_formula}
     \mathrm{rank} (C_{\text{stat}}) = \mathrm{rank} (\Omega).
 \end{equation}
