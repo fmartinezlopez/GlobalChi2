@@ -172,7 +172,7 @@ A systematic variation $s$ produces a modified vector of expected events $\mathb
 \begin{equation}
     \boldsymbol{\xi}_{s} = \mathbf{n}_{s} - \mathbf{n}_{\text{CV}}.
 \end{equation}
-The different contributions to $C_{\text{syst}}$ are constructed from the outer product of these shift vectors. A null direction $\mathbf{x}$ of $C_{\text{stat}}$ remains a null direction of $C_{\text{total}}$ if and only if $\mathbf{x} \cdot \boldsymbol{\xi}_{s} = 0$ for every systematic variation in the uncertainty budget. We will now demonstrate that for a typical systematic variation, the shift vectors have zero projectios onto the structural and kinematic null spaces.
+The different contributions to $C_{\text{syst}}$ are constructed from the outer product of these shift vectors. A null direction $\mathbf{x}$ of $C_{\text{stat}}$ remains a null direction of $C_{\text{total}}$ if and only if $\mathbf{x} \cdot \boldsymbol{\xi}_{s} = 0$ for every systematic variation in the uncertainty budget. We will now demonstrate that for a typical systematic variation, the shift vectors have zero projections onto the structural and kinematic null spaces.
 
 Consider first the simplest case, where a systematic $s$ acts by reweighting the reconstructed event counts directly. Each event $e$ is assigned a modified weight $w_{e}^{(s)}$ while preserving its bin assignments. The shift vector can then be written as
 \begin{equation}
@@ -489,10 +489,11 @@ The method was validated in two settings. In an analytical toy model the project
 
 The method assumes that the event-sharing structure is exact. For this reason we recommend that analyzers stick to exact event-sharing structures when possible. Departures from this assumption are detectable through the spectral gap of the statistical covariance, the comparison of the empirical and structural ranks, and the consistency of the measured block totals, and we have given a corresponding set of diagnostics and remedies. Where the full forward model and nuisance parameterization are available, a binned likelihood fit handles the constraints automatically and is more robust to imperfect sharing; the range-projected $\chi^{2}$ instead requires only the reported cross-block covariance, the binning, and the detector response, making it suited to the goodness-of-fit testing, model tuning, and generator comparison that reuse published measurements.
 
-As multi-distribution measurements with shared events become more common, a correctly calibrated global goodness-of-fit test becomes a routine requirement for their interpretation. The algorithm for constructing the structural combination matrix is given in Appendix~\ref{app:algorithm}, and a reference implementation is available at \cite{XXXX_code_release}.
+As multi-distribution measurements with shared events become more common, a correctly calibrated global goodness-of-fit test becomes a routine requirement for their interpretation. The algorithm for constructing the structural combination matrix is given in Appendix~\ref{app:algorithm}, and a reference implementation can be found in Ref.~\cite{GlobalChi2Github}.
 
 \acknowledgments
-We thank B. Bogart, A. Furmanski, N. Nayak, and S. Pate for valuable discussions that contributed to the development of this work. This work originated from studies conducted within the MicroBooNE collaboration.
+
+We thank Steve Pate-Morales, Andy Furmanski, Ben Bogart, and Nitish Nayak for valuable discussions that contributed to the development of this work, which originated from studies conducted within the MicroBooNE collaboration. P.~Green is supported by a United Kingdom Research and Innovation (UKRI) Future Leaders Fellowship, MR/V022407/1. This manuscript has been authored by Fermi Forward Discovery Group, LLC under Contract No.~89243024CSC000002 with the U.S. Department of Energy, Office of Science, Office of High Energy Physics.
 
 \appendix
 \section{Structural combination matrix algorithm}
